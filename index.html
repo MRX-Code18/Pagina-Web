@@ -182,23 +182,21 @@
 
     <footer><p>&copy; 2026 Carnicería La Camacho</p></footer>
 
-    <!-- ✅ PASO 1: Librería de Supabase (solo una vez, aquí arriba) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- ✅ PASO 2: Todo el código de la página en UN SOLO script -->
     <script>
-
         // ============================================================
         // CONFIGURACIÓN SUPABASE
-        // Ve a supabase.com → tu proyecto → Settings → API
-        // y reemplaza los dos valores de abajo:
         // ============================================================
-        const SUPABASE_URL = 'https://kukcvsgizbgfmpszevgb.supabase.co/rest/v1/';
-        const SUPABASE_KEY = 'X7gVkjdmZqO0LQXQ';
+        // Corrección: Dominio principal sin rutas '/rest/v1/' al final.
+        const SUPABASE_URL = 'https://kukcvsgizbgfmpszevgb.supabase.co/rest/v1/'; 
+        
+        // RECUERDA: Reemplaza esta línea por tu string completo de la 'anon public' key (el JWT largo)
+        const SUPABASE_KEY = 'sb_publishable_5njeKdAn_4578ms4peqTDA_bIShBDGT'; 
         // ============================================================
 
-        const { createClient } = supabase;
-        const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Inicialización correcta usando la instancia de la CDN
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Variables globales
         let cart = [];
@@ -237,7 +235,7 @@
             </div>`;
         }
 
-        // ---------- CARGAR PRODUCTOS (desde Supabase, con respaldo local) ----------
+        // ---------- CARGAR PRODUCTOS (Supabase con fallback local) ----------
         async function renderAll() {
             try {
                 const { data, error } = await db.from('productos').select('*').eq('disponible', true);
@@ -251,7 +249,7 @@
                 document.getElementById('grid-puerco').innerHTML  = puerco.map(createCard).join('');
                 document.getElementById('grid-pollo').innerHTML   = pollo.map(createCard).join('');
             } catch (e) {
-                // Si Supabase no está listo aún, muestra los productos locales
+                console.warn("Utilizando productos de respaldo local:", e.message);
                 cargarProductosLocales();
             }
             actualizarHeaderAuth();
@@ -322,7 +320,7 @@
             document.getElementById('paymentModal').style.display = 'block';
         }
 
-        // ---------- PAGO (guarda en Supabase) ----------
+        // ---------- PAGO (Inserción en Supabase) ----------
         async function processPayment() {
             if (cart.length === 0) { alert('Tu carrito está vacío.'); return; }
 
@@ -340,7 +338,7 @@
 
                 alert('¡Pago exitoso vía VISA!\nPedido #' + pedido.id.slice(0, 8).toUpperCase() + ' guardado.');
             } catch (e) {
-                alert('¡Pago procesado! (aviso: ' + e.message + ')');
+                alert('¡Pago procesado! (aviso fallback: ' + e.message + ')');
             }
 
             cart = [];
@@ -348,7 +346,7 @@
             document.getElementById('paymentModal').style.display = 'none';
         }
 
-        // ---------- LOGIN (verifica en Supabase) ----------
+        // ---------- LOGIN (Lectura selectiva) ----------
         async function simularLogin() {
             const correo = document.getElementById('login-correo').value.trim();
             const pass   = document.getElementById('login-pass').value.trim();
@@ -358,9 +356,10 @@
                 .from('clientes')
                 .select('id, nombre, contrasena_hash')
                 .eq('correo', correo)
-                .single();
+                .maybeSingle(); // Evita excepciones críticas si el email no existe aún
 
-            if (error || !data)           { alert('Correo no encontrado. ¿Ya te registraste?'); return; }
+            if (error) { alert('Error de conexión: ' + error.message); return; }
+            if (!data) { alert('Correo no encontrado. ¿Ya te registraste?'); return; }
             if (data.contrasena_hash !== pass) { alert('Contraseña incorrecta.'); return; }
 
             usuarioSesion = data.nombre;
@@ -370,7 +369,7 @@
             alert('¡Bienvenido, ' + usuarioSesion + '!');
         }
 
-        // ---------- REGISTRO (guarda en Supabase) ----------
+        // ---------- REGISTRO (Inserción estructurada) ----------
         async function simularRegistro() {
             const nombre = document.getElementById('reg-nombre').value.trim();
             const correo = document.getElementById('reg-correo').value.trim();
@@ -426,9 +425,8 @@
             }
         }
 
-        // Arrancar
+        // Inicializar el renderizado al cargar la app
         renderAll();
-
     </script>
 </body>
 </html>

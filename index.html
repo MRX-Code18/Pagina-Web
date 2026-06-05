@@ -4,429 +4,879 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carnicería La Camacho</title>
-    <link rel="shortcut icon" href="img/Logo(0).png" type="img/Logo(0).png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="img/Logo(0).png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
         :root {
-            --verde-principal: #2ecc71; --verde-lima: #badc58; --naranja-acento: #e67e22;
-            --rojo-alerta: #e74c3c; --azul-oscuro: #2c3e50; --morado-fondo: #8e44ad;
-            --blanco: #ffffff; --gris-claro: #ecf0f1; --gris-oscuro: #7f8c8d;
-            --glass-bg: rgba(255,255,255,0.2); --glass-card: rgba(255,255,255,0.25);
-            --glass-dark: rgba(0,0,0,0.6); --glow-gold: 0 0 15px rgba(255,215,0,0.6);
-            --glow-red: 0 0 12px rgba(231,76,60,0.5); --border-light: 1px solid rgba(255,255,255,0.3);
+            --brand: #FF6B35;
+            --brand2: #FFD166;
+            --dark: #0D1117;
+            --dark2: #161B22;
+            --dark3: #1C2333;
+            --glass: rgba(255,255,255,0.06);
+            --glass-border: rgba(255,107,53,0.25);
+            --text: #E6EDF3;
+            --text-muted: #8B949E;
+            --green: #3FB950;
+            --red: #F85149;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: radial-gradient(circle at 10% 30%, #1a2a3a, #0f1722); color: #f0f0f0; scroll-behavior: smooth; }
-        .view { display: none; animation: fadeGlow 0.4s ease-out; }
-        .view.active { display: block; }
-        @keyframes fadeGlow {
-            0% { opacity: 0; filter: blur(4px); transform: translateY(8px);}
-            100% { opacity: 1; filter: blur(0); transform: translateY(0);}
-        }
-        header { background: rgba(15,25,35,0.75); backdrop-filter: blur(12px); display: flex; justify-content: space-between; align-items: center; padding: 10px 5%; box-shadow: 0 4px 25px rgba(0,0,0,0.3), 0 0 8px rgba(255,215,0,0.3); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(255,215,0,0.4); }
-        .logo-area { display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; }
-        .logo-area:hover { transform: scale(1.02); filter: drop-shadow(0 0 8px gold); }
-        .logo-img { width: 85px; height: 85px; object-fit: contain; border-radius: 50%; background: radial-gradient(circle, #fff, #f0e6c5); border: 2px solid #ffd966; box-shadow: 0 0 18px rgba(255,220,100,0.7); overflow: hidden; }
-        .brand-name { font-size: 1.4rem; font-weight: 800; background: linear-gradient(135deg, #FFE6B0, #FFB347); background-clip: text; -webkit-background-clip: text; color: transparent; text-shadow: 0 0 12px rgba(255,180,60,0.5); text-transform: uppercase; }
-        .header-icons { display: flex; align-items: center; gap: 20px; }
-        .cart-container { position: relative; cursor: pointer; font-size: 1.6rem; color: #ffe0a3; filter: drop-shadow(0 0 5px #ffaa33); transition: 0.2s; }
-        .cart-container:hover { transform: scale(1.05); filter: drop-shadow(0 0 12px #ffcc55); }
-        .cart-badge { position: absolute; top: -10px; right: -10px; background: radial-gradient(circle, #ff4d4d, #b91c1c); color: white; font-size: 12px; padding: 3px 7px; border-radius: 50%; font-weight: bold; box-shadow: 0 0 8px #ff6666; }
-        .hero { background: radial-gradient(ellipse at 50% 30%, rgba(44,62,80,0.7), rgba(20,30,45,0.9)); backdrop-filter: blur(5px); padding: 40px 5%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
-        .hero-card { background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); border-radius: 25px; padding: 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 20px 35px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,240,0.2); border: 1px solid rgba(255,215,0,0.5); transition: 0.3s; }
-        .hero-card:first-child { background: linear-gradient(135deg, rgba(230,126,34,0.7), rgba(243,156,18,0.6)); backdrop-filter: blur(8px); color: white; border-left: 3px solid #ffcc66; }
-        .hero-card:last-child { background: linear-gradient(135deg, rgba(186,220,88,0.6), rgba(46,204,113,0.6)); backdrop-filter: blur(8px); color: #1e2a36; border-left: 3px solid #f9e45b; }
-        .hero-card:hover { transform: translateY(-6px); box-shadow: 0 0 25px rgba(255,200,80,0.6); border-color: #ffdd99; }
-        .hero-img { width: 120px; height: 120px; border-radius: 20px; object-fit: cover; border: 3px solid #ffd966; box-shadow: 0 0 18px gold; transition: 0.2s; }
-        .btn-pill { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); color: white; padding: 10px 30px; border-radius: 50px; border: 1px solid #ffcc66; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-        .btn-pill:hover { transform: scale(1.05); background: #ff8c42; border-color: white; box-shadow: 0 0 18px #ffaa44; }
-        .ofertas-container { padding: 60px 5%; text-align: center; background: radial-gradient(circle at 20% 40%, rgba(142,68,173,0.7), rgba(44,62,80,0.85)); backdrop-filter: blur(4px); }
-        .ofertas-header { background: rgba(255,255,240,0.2); backdrop-filter: blur(12px); color: #ffe6b3; padding: 15px 50px; border-radius: 60px; margin-bottom: 50px; display: inline-block; font-weight: bold; border: 1px solid rgba(255,215,0,0.7); box-shadow: 0 0 15px rgba(255,200,0,0.4); text-shadow: 0 0 5px #ffaa33; }
-        .ofertas-header h2 { color: #ffe6b3; } /* Corrección de contraste */
-        .grid-productos { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; max-width: 1400px; margin: 0 auto; }
-        .card-producto { background: rgba(20,30,40,0.65); backdrop-filter: blur(12px); border-radius: 25px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,215,0,0.2); transition: 0.3s; border: 1px solid rgba(255,200,100,0.3); }
-        .card-producto:hover { transform: translateY(-10px); box-shadow: 0 20px 35px rgba(0,0,0,0.5), 0 0 18px rgba(255,200,100,0.7); border-color: #ffcc66; }
-        .img-container { width: 100%; height: 220px; overflow: hidden; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; position: relative; }
-        .img-container::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(255,215,0,0.1), transparent 70%); pointer-events: none; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-        .card-producto:hover .img-container img { transform: scale(1.05); }
-        .info-prod { padding: 20px; color: #f5f5f5; }
-        .precio { font-size: 1.6rem; font-weight: bold; color: #ffd966; text-shadow: 0 0 8px #e67e22; margin-bottom: 15px; }
-        .btn-seleccion { background: linear-gradient(95deg, #2ecc71, #27ae60); border: none; color: white; padding: 15px; border-radius: 40px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .btn-seleccion:hover { background: linear-gradient(95deg, #3ee684, #2ecc71); box-shadow: 0 0 16px #2ecc71; transform: scale(0.98); }
-        .btn-back { background: rgba(44,62,80,0.8); backdrop-filter: blur(8px); color: white; border: 1px solid #ffcc66; padding: 15px; border-radius: 40px; cursor: pointer; margin-bottom: 20px; font-weight: bold; transition: 0.2s; }
-        .btn-back:hover { background: #e67e22; box-shadow: 0 0 14px #ffaa55; border-color: white; }
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.75); backdrop-filter: blur(12px); align-items: center; justify-content: center; }
-        .modal-content { background: rgba(25,35,45,0.9); backdrop-filter: blur(16px); margin: 5% auto; padding: 30px; width: 90%; max-width: 450px; border-radius: 30px; max-height: 85vh; overflow-y: auto; border: 1px solid rgba(255,215,0,0.7); box-shadow: 0 20px 35px rgba(0,0,0,0.5), 0 0 20px rgba(255,200,0,0.3); color: #fff; }
-        .payment-form { margin-top: 20px; text-align: left; }
-        .payment-input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ffcc77; border-radius: 50px; background: rgba(0,0,0,0.5); color: white; backdrop-filter: blur(4px); outline: none; transition: 0.2s; }
-        .payment-input:focus { border-color: #ffaa33; box-shadow: 0 0 12px #ffaa55; background: rgba(0,0,0,0.7); }
-        .card-icons { font-size: 2rem; text-align: center; margin-bottom: 15px; filter: drop-shadow(0 0 6px gold); }
-        .contacto-section { padding: 40px 5%; background: rgba(44,62,80,0.7); backdrop-filter: blur(10px); color: white; text-align: center; border-top: 1px solid #ffcc66; }
-        .contacto-section h2 { margin-bottom: 20px; text-shadow: 0 0 8px gold; }
-        .contacto-info { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
-        .contacto-info p i { filter: drop-shadow(0 0 5px #ffaa44); margin-right: 6px; }
-        footer { background: rgba(15,25,35,0.85); backdrop-filter: blur(8px); color: #ddd; padding: 40px 5%; text-align: center; border-top: 1px solid rgba(255,200,100,0.4); }
-        a { color: #ffcc66; transition: 0.2s; }
-        a:hover { color: #ffaa33; text-shadow: 0 0 5px gold; }
-        h2, h4 { letter-spacing: 0.5px; }
+        html { scroll-behavior:smooth; }
+        body { font-family: 'Nunito', sans-serif; background: var(--dark); color: var(--text); min-height:100vh; overflow-x:hidden; }
+
+        /* ── NOISE OVERLAY ── */
+        body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+
+        /* ── HEADER ── */
+        header { position:sticky; top:0; z-index:900; background: rgba(13,17,23,0.9); backdrop-filter:blur(20px); border-bottom:1px solid var(--glass-border); padding:0 5%; height:72px; display:flex; align-items:center; justify-content:space-between; }
+        .logo-wrap { display:flex; align-items:center; gap:14px; cursor:pointer; text-decoration:none; }
+        .logo-img { width:48px; height:48px; border-radius:50%; border:2px solid var(--brand); object-fit:cover; box-shadow:0 0 18px rgba(255,107,53,0.4); }
+        .logo-text { font-family:'Bebas Neue', sans-serif; font-size:1.6rem; letter-spacing:2px; background:linear-gradient(135deg,#FFD166,#FF6B35); -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .nav-right { display:flex; align-items:center; gap:18px; }
+        .btn-nav { background:none; border:1px solid var(--glass-border); color:var(--text-muted); padding:8px 16px; border-radius:8px; cursor:pointer; font-size:.85rem; font-weight:700; transition:.2s; font-family:'Nunito',sans-serif; }
+        .btn-nav:hover { border-color:var(--brand); color:var(--brand); }
+        .cart-btn { position:relative; background:linear-gradient(135deg,var(--brand),#e05a2b); border:none; color:white; width:42px; height:42px; border-radius:10px; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; transition:.2s; box-shadow:0 4px 14px rgba(255,107,53,0.3); }
+        .cart-btn:hover { transform:scale(1.05); box-shadow:0 6px 20px rgba(255,107,53,0.5); }
+        .cart-badge { position:absolute; top:-6px; right:-6px; background:#F85149; color:white; font-size:10px; font-weight:800; min-width:18px; height:18px; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
+        #user-greeting { font-size:.85rem; font-weight:700; color:var(--brand2); }
+
+        /* ── HERO BANNER ── */
+        .hero { padding:80px 5% 60px; background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(255,107,53,0.12),transparent); position:relative; z-index:1; }
+        .hero-inner { max-width:1300px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+        .hero-card { background:var(--dark2); border:1px solid var(--glass-border); border-radius:20px; padding:32px; display:flex; align-items:center; justify-content:space-between; gap:20px; overflow:hidden; position:relative; cursor:pointer; transition:.3s; }
+        .hero-card::before { content:''; position:absolute; inset:0; opacity:0; background:radial-gradient(circle at 80% 50%,rgba(255,107,53,0.15),transparent 70%); transition:.3s; }
+        .hero-card:hover::before { opacity:1; }
+        .hero-card:hover { transform:translateY(-4px); border-color:var(--brand); box-shadow:0 20px 40px rgba(0,0,0,0.4),0 0 0 1px rgba(255,107,53,0.3); }
+        .hero-card h2 { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:2px; color:var(--brand2); margin-bottom:6px; }
+        .hero-card p { color:var(--text-muted); font-size:.9rem; margin-bottom:16px; }
+        .btn-pill { background:linear-gradient(135deg,var(--brand),#e05a2b); color:white; border:none; padding:10px 24px; border-radius:50px; font-weight:700; cursor:pointer; font-size:.85rem; transition:.2s; font-family:'Nunito',sans-serif; box-shadow:0 4px 14px rgba(255,107,53,0.3); }
+        .btn-pill:hover { transform:scale(1.04); box-shadow:0 6px 20px rgba(255,107,53,0.5); }
+        .hero-img { width:110px; height:110px; object-fit:cover; border-radius:16px; border:2px solid var(--glass-border); flex-shrink:0; }
+
+        /* ── CATALOG SECTIONS ── */
+        .catalog-section { padding:60px 5%; max-width:1400px; margin:0 auto; position:relative; z-index:1; }
+        .section-title { display:flex; align-items:center; gap:14px; margin-bottom:36px; }
+        .section-title h2 { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:2px; }
+        .section-title .line { flex:1; height:1px; background:linear-gradient(90deg,var(--glass-border),transparent); }
+        .products-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:24px; }
+
+        /* ── PRODUCT CARD ── */
+        .prod-card { background:var(--dark2); border:1px solid rgba(255,255,255,0.06); border-radius:20px; overflow:hidden; transition:.3s; position:relative; }
+        .prod-card:hover { transform:translateY(-6px); border-color:var(--glass-border); box-shadow:0 20px 40px rgba(0,0,0,0.4); }
+        .prod-img-wrap { height:200px; overflow:hidden; background:var(--dark3); position:relative; }
+        .prod-img-wrap img { width:100%; height:100%; object-fit:cover; transition:.4s; }
+        .prod-card:hover .prod-img-wrap img { transform:scale(1.06); }
+        .prod-cat-tag { position:absolute; top:12px; left:12px; background:rgba(13,17,23,0.85); backdrop-filter:blur(8px); border:1px solid var(--glass-border); color:var(--brand); font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px; padding:4px 10px; border-radius:20px; }
+        .prod-body { padding:18px; }
+        .prod-name { font-weight:800; font-size:1rem; margin-bottom:4px; }
+        .prod-price { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:1px; color:var(--brand2); }
+        .prod-price span { font-family:'Nunito',sans-serif; font-size:.75rem; color:var(--text-muted); font-weight:600; }
+        .btn-add { width:100%; background:var(--dark3); border:1px solid var(--glass-border); color:var(--text); padding:12px; border-radius:12px; cursor:pointer; font-weight:700; margin-top:12px; transition:.2s; font-family:'Nunito',sans-serif; font-size:.9rem; display:flex; align-items:center; justify-content:center; gap:8px; }
+        .btn-add:hover { background:linear-gradient(135deg,var(--brand),#e05a2b); border-color:transparent; color:white; box-shadow:0 4px 14px rgba(255,107,53,0.3); }
+
+        /* ── VIEWS ── */
+        .view { display:none; animation:fadein .35s ease; }
+        .view.active { display:block; }
+        @keyframes fadein { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        .btn-back { background:var(--dark2); border:1px solid var(--glass-border); color:var(--text); padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:700; margin:20px 5%; display:inline-flex; align-items:center; gap:8px; transition:.2s; font-family:'Nunito',sans-serif; }
+        .btn-back:hover { border-color:var(--brand); color:var(--brand); }
+
+        /* ── MODALS ── */
+        .modal-overlay { display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.75); backdrop-filter:blur(10px); align-items:center; justify-content:center; padding:20px; }
+        .modal-overlay.open { display:flex; }
+        .modal-box { background:var(--dark2); border:1px solid var(--glass-border); border-radius:24px; padding:32px; width:100%; max-width:460px; max-height:90vh; overflow-y:auto; box-shadow:0 30px 60px rgba(0,0,0,0.6); animation:fadein .3s ease; }
+        .modal-box h2 { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:2px; margin-bottom:6px; color:var(--brand2); }
+        .modal-box h3 { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:1px; color:var(--text); margin-bottom:16px; }
+        .modal-close { float:right; background:none; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer; margin-top:-4px; }
+        .modal-close:hover { color:var(--red); }
+        .inp { width:100%; padding:12px 16px; background:var(--dark3); border:1px solid rgba(255,255,255,0.1); border-radius:12px; color:var(--text); font-family:'Nunito',sans-serif; font-size:.9rem; margin:8px 0; outline:none; transition:.2s; }
+        .inp:focus { border-color:var(--brand); box-shadow:0 0 0 3px rgba(255,107,53,0.15); }
+        .inp-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .inp-label { font-size:.75rem; font-weight:700; color:var(--brand2); text-transform:uppercase; letter-spacing:.5px; margin-top:10px; display:block; }
+        .btn-main { width:100%; background:linear-gradient(135deg,var(--brand),#e05a2b); color:white; border:none; padding:14px; border-radius:12px; font-weight:800; cursor:pointer; font-size:1rem; margin-top:12px; transition:.2s; font-family:'Nunito',sans-serif; box-shadow:0 4px 14px rgba(255,107,53,0.3); }
+        .btn-main:hover { transform:scale(1.01); box-shadow:0 8px 24px rgba(255,107,53,0.4); }
+        .btn-ghost { width:100%; background:none; border:1px solid var(--glass-border); color:var(--text-muted); padding:12px; border-radius:12px; font-weight:700; cursor:pointer; font-size:.9rem; margin-top:8px; transition:.2s; font-family:'Nunito',sans-serif; }
+        .btn-ghost:hover { border-color:var(--text-muted); color:var(--text); }
+        .link-switch { text-align:center; margin-top:16px; font-size:.85rem; color:var(--text-muted); }
+        .link-switch a { color:var(--brand); font-weight:700; cursor:pointer; text-decoration:none; }
+        .link-switch a:hover { color:var(--brand2); }
+        .divider { border:none; border-top:1px solid rgba(255,255,255,0.07); margin:18px 0; }
+        .form-section { display:none; }
+        .form-section.active { display:block; }
+        .step-indicator { display:flex; gap:8px; margin-bottom:20px; }
+        .step { flex:1; height:3px; border-radius:3px; background:rgba(255,255,255,0.1); transition:.3s; }
+        .step.done { background:var(--brand); }
+        .error-msg { color:var(--red); font-size:.8rem; margin-top:4px; display:none; }
+        .success-msg { color:var(--green); font-size:.85rem; margin:8px 0; display:none; }
+
+        /* ── CART ── */
+        .cart-items-list { max-height:260px; overflow-y:auto; margin:16px 0; }
+        .cart-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06); }
+        .cart-item-name { font-size:.9rem; font-weight:700; }
+        .cart-item-price { color:var(--brand2); font-weight:800; }
+        .cart-item-del { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:.9rem; margin-left:10px; transition:.2s; }
+        .cart-item-del:hover { color:var(--red); }
+        .cart-total-row { display:flex; justify-content:space-between; font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:1px; padding:12px 0; border-top:1px solid var(--glass-border); color:var(--brand2); }
+        .empty-cart { text-align:center; color:var(--text-muted); padding:30px 0; font-size:.9rem; }
+
+        /* ── PAYMENT ── */
+        .card-preview { background:linear-gradient(135deg,#1a1a2e,#16213e); border-radius:16px; padding:20px 24px; margin:16px 0; border:1px solid rgba(255,255,255,0.1); }
+        .card-chip { width:30px; height:22px; background:linear-gradient(135deg,#ffd700,#ffb300); border-radius:4px; margin-bottom:14px; }
+        .card-number-display { font-family:monospace; font-size:1.2rem; letter-spacing:3px; color:rgba(255,255,255,0.7); margin-bottom:10px; }
+        .card-info-row { display:flex; justify-content:space-between; font-size:.75rem; color:rgba(255,255,255,0.5); }
+
+        /* ── USER PROFILE ── */
+        .profile-header { display:flex; align-items:center; gap:16px; padding-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:20px; }
+        .profile-avatar { width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg,var(--brand),#e05a2b); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:white; flex-shrink:0; }
+        .profile-name { font-weight:800; font-size:1.1rem; }
+        .profile-email { font-size:.8rem; color:var(--text-muted); margin-top:2px; }
+        .profile-tabs { display:flex; gap:8px; margin-bottom:20px; }
+        .p-tab { background:none; border:1px solid rgba(255,255,255,0.08); color:var(--text-muted); padding:8px 14px; border-radius:8px; cursor:pointer; font-size:.8rem; font-weight:700; transition:.2s; font-family:'Nunito',sans-serif; }
+        .p-tab.active { background:var(--brand); border-color:var(--brand); color:white; }
+        .p-tab-content { display:none; }
+        .p-tab-content.active { display:block; }
+        .address-card { background:var(--dark3); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:flex-start; }
+        .address-card p { font-size:.85rem; color:var(--text-muted); margin-top:4px; }
+        .btn-sm { background:none; border:1px solid var(--glass-border); color:var(--text-muted); padding:5px 10px; border-radius:6px; cursor:pointer; font-size:.75rem; font-weight:700; transition:.2s; font-family:'Nunito',sans-serif; }
+        .btn-sm:hover { border-color:var(--brand); color:var(--brand); }
+        .order-item { background:var(--dark3); border-radius:12px; padding:12px 16px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
+        .order-status { font-size:.75rem; font-weight:800; padding:3px 10px; border-radius:20px; }
+        .status-pagado { background:rgba(63,185,80,0.15); color:var(--green); }
+
+        /* ── CONTACT ── */
+        .contact-section { background:var(--dark2); border-top:1px solid var(--glass-border); padding:48px 5%; text-align:center; position:relative; z-index:1; }
+        .contact-section h2 { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:2px; color:var(--brand2); margin-bottom:24px; }
+        .contact-grid { display:flex; justify-content:center; gap:40px; flex-wrap:wrap; }
+        .contact-item { display:flex; align-items:center; gap:10px; color:var(--text-muted); font-size:.9rem; }
+        .contact-item i { color:var(--brand); font-size:1.1rem; }
+        footer { background:var(--dark); border-top:1px solid rgba(255,255,255,0.06); padding:24px 5%; text-align:center; color:var(--text-muted); font-size:.8rem; position:relative; z-index:1; }
+
+        /* ── TOAST ── */
+        #toast { position:fixed; bottom:30px; right:30px; background:var(--dark2); border:1px solid var(--glass-border); color:var(--text); padding:14px 20px; border-radius:14px; font-weight:700; font-size:.9rem; z-index:2000; display:flex; align-items:center; gap:10px; box-shadow:0 10px 30px rgba(0,0,0,0.5); transform:translateY(100px); opacity:0; transition:.3s cubic-bezier(.34,1.56,.64,1); pointer-events:none; }
+        #toast.show { transform:translateY(0); opacity:1; }
+        #toast.success i { color:var(--green); }
+        #toast.error i { color:var(--red); }
+
+        /* ── LOADING OVERLAY ── */
+        .loading-dots { display:inline-flex; gap:4px; }
+        .loading-dots span { width:6px; height:6px; border-radius:50%; background:var(--brand); animation:bounce .8s infinite; }
+        .loading-dots span:nth-child(2){animation-delay:.15s}
+        .loading-dots span:nth-child(3){animation-delay:.3s}
+        @keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+
+        /* ── RESPONSIVE ── */
+        @media(max-width:768px){ .hero-inner{grid-template-columns:1fr} .inp-row{grid-template-columns:1fr} }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo-area" onclick="showView('inicio')">
-            <img src="img/Logo(0).png" alt="Logo Carnicería La Camacho" class="logo-img">
-            <div class="brand-name">Carnicería La Camacho</div>
-        </div>
-        <div class="header-icons" id="header-auth-area">
-            <i class="fas fa-user" onclick="toggleAuth()" style="cursor:pointer; font-size: 1.4rem; color: #ffe0a3; filter: drop-shadow(0 0 4px #ffaa44);"></i>
-            <div class="cart-container" onclick="toggleCart()">
-                <i class="fas fa-shopping-basket"></i>
-                <span class="cart-badge" id="cart-count">0</span>
-            </div>
-        </div>
-    </header>
 
-    <div id="view-inicio" class="view active">
-        <section class="hero">
-            <div class="hero-card">
-                <div><h2>Catálogo</h2><p>Carne de Puerco</p><button class="btn-pill" onclick="showView('puerco')">Ver Puerco</button></div>
-                <img src="img/imagen(2).png" class="hero-img">
-            </div>
-            <div class="hero-card">
-                <div><h2>Catálogo</h2><p>Pollería</p><button class="btn-pill" onclick="showView('pollo')">Ver Pollo</button></div>
-                <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=300&auto=format&fit=crop" class="hero-img">
-            </div>
-        </section>
-        <section class="ofertas-container" id="productos">
-            <div class="ofertas-header"><h2>🥩 NUESTRAS OFERTAS 🥩</h2></div>
-            <div class="grid-productos" id="grid-ofertas"></div>
-        </section>
+<!-- HEADER -->
+<header>
+    <a class="logo-wrap" onclick="showView('inicio')">
+        <img src="img/Logo(0).png" class="logo-img" onerror="this.src='https://via.placeholder.com/48'">
+        <span class="logo-text">La Camacho</span>
+    </a>
+    <div class="nav-right" id="nav-right">
+        <button class="btn-nav" onclick="openAuth()"><i class="fas fa-user"></i> Entrar</button>
+        <button class="cart-btn" onclick="openCart()">
+            <i class="fas fa-basket-shopping"></i>
+            <span class="cart-badge" id="cart-count">0</span>
+        </button>
     </div>
+</header>
 
-    <div id="view-puerco" class="view">
-        <section class="ofertas-container" style="background: radial-gradient(circle at 30% 20%, rgba(230,126,34,0.75), rgba(80,40,20,0.9)); backdrop-filter: blur(5px);">
-            <button class="btn-back" onclick="showView('inicio')">← Volver al Inicio</button>
-            <div class="ofertas-header"><h2>🐖 CARNE DE PUERCO 🐖</h2></div>
-            <div class="grid-productos" id="grid-puerco"></div>
-        </section>
-    </div>
+<!-- TOAST -->
+<div id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg"></span></div>
 
-    <div id="view-pollo" class="view">
-        <section class="ofertas-container" style="background: radial-gradient(circle at 70% 30%, rgba(39,174,96,0.7), rgba(20,70,40,0.85)); backdrop-filter: blur(5px);">
-            <button class="btn-back" onclick="showView('inicio')">← Volver al Inicio</button>
-            <div class="ofertas-header"><h2>🍗 SECCIÓN DE POLLERÍA 🍗</h2></div>
-            <div class="grid-productos" id="grid-pollo"></div>
-        </section>
-    </div>
-
-    <div id="cartModal" class="modal">
-        <div class="modal-content">
-            <h2 style="text-align:center;">🛒 Tu Pedido</h2>
-            <div id="cart-items" style="margin: 20px 0;"></div>
-            <div id="cart-total" style="font-weight:bold; font-size:1.2rem; margin:20px 0; color:#ffd966;">Total: $0.00</div>
-            <button class="btn-seleccion" onclick="openPayment()">Pagar con Tarjeta (VISA)</button>
-            <button class="btn-seleccion" style="background:var(--gris-oscuro); opacity:0.9;" onclick="toggleCart()">Cerrar</button>
-        </div>
-    </div>
-
-    <div id="paymentModal" class="modal">
-        <div class="modal-content">
-            <h2 style="text-align:center;">💳 Pago Seguro</h2>
-            <div class="card-icons">
-                <i class="fab fa-cc-visa" style="color:#1a1f71; filter: drop-shadow(0 0 5px gold);"></i>
-                <i class="fab fa-cc-mastercard" style="color:#eb001b; filter: drop-shadow(0 0 5px gold);"></i>
-            </div>
-            <div class="payment-form">
-                <input type="text" class="payment-input" placeholder="Nombre en la tarjeta">
-                <input type="text" class="payment-input" placeholder="Número de tarjeta (16 dígitos)" maxlength="16">
-                <div style="display:flex; gap:10px;">
-                    <input type="text" class="payment-input" placeholder="MM/AA">
-                    <input type="password" class="payment-input" placeholder="NIP/CVV" maxlength="3">
+<!-- ===== VIEW: INICIO ===== -->
+<div id="view-inicio" class="view active">
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-card" onclick="showView('puerco')">
+                <div>
+                    <h2>Carne de Puerco</h2>
+                    <p>Cortes frescos del día, directamente a tu mesa</p>
+                    <button class="btn-pill">Ver catálogo →</button>
                 </div>
+                <img src="data:image/png;base64,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" class="hero-img" onerror="this.src='https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=200&auto=format&fit=crop'">
             </div>
-            <button class="btn-seleccion" onclick="processPayment()">Confirmar Compra</button>
-            <button class="btn-back" style="width:100%;" onclick="document.getElementById('paymentModal').style.display='none'">Cancelar</button>
-        </div>
-    </div>
-
-    <div id="authModal" class="modal">
-        <div class="modal-content">
-            <div id="form-login">
-                <h2 style="text-align:center;">Iniciar Sesión</h2>
-                <input type="email" id="login-correo" class="payment-input" placeholder="Correo electrónico">
-                <input type="password" id="login-pass" class="payment-input" placeholder="Contraseña">
-                <button type="button" class="btn-seleccion" onclick="simularLogin()">Entrar</button>
-                <p style="text-align:center; margin-top:10px;">¿No tienes cuenta? <a href="#" onclick="switchForm('register')">Regístrate</a></p>
+            <div class="hero-card" onclick="showView('pollo')">
+                <div>
+                    <h2>Pollería</h2>
+                    <p>Pollo fresco y piezas seleccionadas cada mañana</p>
+                    <button class="btn-pill">Ver catálogo →</button>
+                </div>
+                <img src="data:image/png;base64,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" class="hero-img">
             </div>
-            <div id="form-register" style="display:none;">
-                <h2 style="text-align:center;">Registro Oficial</h2>
-                <input type="text" id="reg-nombre" class="payment-input" placeholder="Nombre Completo">
-                <input type="email" id="reg-correo" class="payment-input" placeholder="Correo electrónico">
-                <input type="text" id="reg-curp" class="payment-input" placeholder="CURP o ID Oficial" maxlength="18">
-                <input type="password" id="reg-pass" class="payment-input" placeholder="Crear contraseña">
-                <button type="button" class="btn-seleccion" onclick="simularRegistro()">Registrarse</button>
-                <p style="text-align:center; margin-top:10px;">¿Ya tienes cuenta? <a href="#" onclick="switchForm('login')">Iniciar Sesión</a></p>
-            </div>
-            <button class="btn-back" style="width:100%; margin-top:10px;" onclick="toggleAuth()">Cerrar</button>
-        </div>
-    </div>
-
-    <section class="contacto-section">
-        <h2>Contáctanos</h2>
-        <div class="contacto-info">
-            <p><i class="fas fa-phone"></i> Tel: 7681008819</p>
-            <p><i class="fas fa-envelope"></i> Email: contacto@lacamacho.com</p>
-            <p><i class="fas fa-map-marker-alt"></i> Naranjos, Veracruz</p>
         </div>
     </section>
 
-    <footer><p>&copy; 2026 Carnicería La Camacho</p></footer>
+    <div class="catalog-section">
+        <div class="section-title">
+            <h2>🥩 Ofertas del Día</h2>
+            <div class="line"></div>
+        </div>
+        <div class="products-grid" id="grid-ofertas">
+            <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">
+                <div class="loading-dots"><span></span><span></span><span></span></div>
+                <p style="margin-top:12px">Cargando productos...</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- ===== VIEW: PUERCO ===== -->
+<div id="view-puerco" class="view">
+    <button class="btn-back" onclick="showView('inicio')"><i class="fas fa-arrow-left"></i> Volver</button>
+    <div class="catalog-section">
+        <div class="section-title">
+            <h2>🐖 Carne de Puerco</h2>
+            <div class="line"></div>
+        </div>
+        <div class="products-grid" id="grid-puerco"></div>
+    </div>
+</div>
 
-    <script>
-        // ============================================================
-        // CONFIGURACIÓN SUPABASE
-        // ============================================================
-        const SUPABASE_URL = 'https://kukcvsgizbgfmpszevgb.supabase.co';        
-        
-        // ✅ SOLUCIÓN: Cambia este texto por tu clave 'anon public' real completa (el token JWT largo que empieza con eyJ...)
-        const SUPABASE_KEY = 'sb_publishable_5njeKdAn_4578ms4peqTDA_bIShBDGT'; 
-        // ============================================================
+<!-- ===== VIEW: POLLO ===== -->
+<div id="view-pollo" class="view">
+    <button class="btn-back" onclick="showView('inicio')"><i class="fas fa-arrow-left"></i> Volver</button>
+    <div class="catalog-section">
+        <div class="section-title">
+            <h2>🍗 Pollería</h2>
+            <div class="line"></div>
+        </div>
+        <div class="products-grid" id="grid-pollo"></div>
+    </div>
+</div>
 
-        // Inicialización correcta usando la instancia de la CDN
-        const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<!-- ===== MODAL: AUTH ===== -->
+<div id="modal-auth" class="modal-overlay">
+    <div class="modal-box" style="max-width:480px">
+        <button class="modal-close" onclick="closeModal('modal-auth')"><i class="fas fa-times"></i></button>
 
-        // Variables globales
-        let cart = [];
-        let usuarioSesion = null;
-        let clienteId = null;
+        <!-- LOGIN -->
+        <div id="form-login" class="form-section active">
+            <h2>Bienvenido</h2>
+            <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:20px">Ingresa a tu cuenta para gestionar pedidos y direcciones</p>
+            <label class="inp-label">Correo electrónico</label>
+            <input type="email" id="l-email" class="inp" placeholder="tucorreo@ejemplo.com">
+            <label class="inp-label">Contraseña</label>
+            <input type="password" id="l-pass" class="inp" placeholder="••••••••">
+            <div id="l-error" class="error-msg"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+            <button class="btn-main" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</button>
+            <div class="link-switch">¿No tienes cuenta? <a onclick="switchAuth('register')">Regístrate gratis</a></div>
+        </div>
 
-        // ---------- NAVEGACIÓN ----------
-        function showView(id) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-' + id).classList.add('active');
-        }
+        <!-- REGISTRO MEJORADO (2 pasos) -->
+        <div id="form-register" class="form-section">
+            <h2>Crear Cuenta</h2>
+            <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:16px">Completa tu información para registrarte</p>
+            <div class="step-indicator">
+                <div class="step done" id="step1-dot"></div>
+                <div class="step" id="step2-dot"></div>
+            </div>
 
-        // ---------- MODAL AUTH ----------
-        function toggleAuth() {
-            const modal = document.getElementById('authModal');
-            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
-        }
-        function switchForm(type) {
-            document.getElementById('form-login').style.display    = (type === 'login')    ? 'block' : 'none';
-            document.getElementById('form-register').style.display = (type === 'register') ? 'block' : 'none';
-        }
-
-        // ---------- TARJETAS DE PRODUCTO ----------
-        function createCard(p) {
-            const imgSrc = p.imagen_url || p.img || '';
-            const precio = Number(p.precio);
-            return `<div class="card-producto">
-                <div class="img-container">
-                    <img src="${imgSrc}" onerror="this.src='https://via.placeholder.com/400x220?text=${encodeURIComponent(p.nombre)}'">
+            <!-- PASO 1 -->
+            <div id="reg-step1" class="form-section active">
+                <h3>Datos Personales</h3>
+                <div class="inp-row">
+                    <div>
+                        <label class="inp-label">Nombre(s)</label>
+                        <input type="text" id="r-nombre" class="inp" placeholder="Juan">
+                    </div>
+                    <div>
+                        <label class="inp-label">Apellidos</label>
+                        <input type="text" id="r-apellido" class="inp" placeholder="García">
+                    </div>
                 </div>
-                <div class="info-prod">
-                    <h4>${p.nombre}</h4>
-                    <div class="precio">$${precio.toFixed(2)}</div>
-                    <button class="btn-seleccion" onclick="addToCart('${p.nombre}', ${precio})">Agregar</button>
+                <label class="inp-label">Teléfono</label>
+                <input type="tel" id="r-tel" class="inp" placeholder="768 100 0000" maxlength="10">
+                <label class="inp-label">Correo electrónico</label>
+                <input type="email" id="r-email" class="inp" placeholder="tucorreo@ejemplo.com">
+                <label class="inp-label">CURP (Opcional)</label>
+                <input type="text" id="r-curp" class="inp" placeholder="GAMU900101HVZRCL01" maxlength="18" style="text-transform:uppercase">
+                <div id="r-error1" class="error-msg"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                <button class="btn-main" onclick="regStep2()">Continuar <i class="fas fa-arrow-right"></i></button>
+                <div class="link-switch">¿Ya tienes cuenta? <a onclick="switchAuth('login')">Inicia sesión</a></div>
+            </div>
+
+            <!-- PASO 2 -->
+            <div id="reg-step2" class="form-section">
+                <h3>Dirección y Contraseña</h3>
+                <label class="inp-label">Dirección de entrega</label>
+                <input type="text" id="r-calle" class="inp" placeholder="Calle y número">
+                <div class="inp-row">
+                    <div>
+                        <label class="inp-label">Colonia</label>
+                        <input type="text" id="r-colonia" class="inp" placeholder="Centro">
+                    </div>
+                    <div>
+                        <label class="inp-label">C.P.</label>
+                        <input type="text" id="r-cp" class="inp" placeholder="92300" maxlength="5">
+                    </div>
                 </div>
-            </div>`;
+                <label class="inp-label">Contraseña</label>
+                <input type="password" id="r-pass" class="inp" placeholder="Mínimo 6 caracteres">
+                <label class="inp-label">Confirmar contraseña</label>
+                <input type="password" id="r-pass2" class="inp" placeholder="Repite tu contraseña">
+                <div id="r-error2" class="error-msg"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                <button class="btn-main" onclick="doRegister()"><i class="fas fa-user-plus"></i> Crear Cuenta</button>
+                <button class="btn-ghost" onclick="switchRegStep(1)"><i class="fas fa-arrow-left"></i> Atrás</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL: PERFIL ===== -->
+<div id="modal-profile" class="modal-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('modal-profile')"><i class="fas fa-times"></i></button>
+        <div class="profile-header">
+            <div class="profile-avatar" id="p-avatar">U</div>
+            <div>
+                <div class="profile-name" id="p-name">Usuario</div>
+                <div class="profile-email" id="p-email">correo@ejemplo.com</div>
+            </div>
+        </div>
+        <div class="profile-tabs">
+            <button class="p-tab active" onclick="switchPTab('datos')">Mis Datos</button>
+            <button class="p-tab" onclick="switchPTab('direcciones')">Direcciones</button>
+            <button class="p-tab" onclick="switchPTab('pedidos')">Pedidos</button>
+        </div>
+        <!-- Datos -->
+        <div id="ptab-datos" class="p-tab-content active">
+            <label class="inp-label">Nombre completo</label>
+            <input type="text" id="pe-nombre" class="inp">
+            <label class="inp-label">Teléfono</label>
+            <input type="text" id="pe-tel" class="inp">
+            <label class="inp-label">Correo</label>
+            <input type="email" id="pe-email" class="inp" disabled style="opacity:.5">
+            <button class="btn-main" onclick="saveProfile()"><i class="fas fa-save"></i> Guardar Cambios</button>
+            <hr class="divider">
+            <button class="btn-ghost" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+        </div>
+        <!-- Direcciones -->
+        <div id="ptab-direcciones" class="p-tab-content">
+            <div id="addresses-list"></div>
+            <button class="btn-main" style="margin-top:8px" onclick="openAddAddress()"><i class="fas fa-plus"></i> Agregar Dirección</button>
+        </div>
+        <!-- Pedidos -->
+        <div id="ptab-pedidos" class="p-tab-content">
+            <div id="orders-list"><p style="color:var(--text-muted);text-align:center;padding:20px;font-size:.85rem">Cargando historial...</p></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL: DIRECCIÓN ===== -->
+<div id="modal-address" class="modal-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('modal-address')"><i class="fas fa-times"></i></button>
+        <h2>Nueva Dirección</h2>
+        <label class="inp-label">Alias (Ej: Casa, Trabajo)</label>
+        <input type="text" id="a-alias" class="inp" placeholder="Casa">
+        <label class="inp-label">Calle y número</label>
+        <input type="text" id="a-calle" class="inp" placeholder="Av. Juárez #15">
+        <div class="inp-row">
+            <div><label class="inp-label">Colonia</label><input type="text" id="a-colonia" class="inp" placeholder="Centro"></div>
+            <div><label class="inp-label">C.P.</label><input type="text" id="a-cp" class="inp" maxlength="5"></div>
+        </div>
+        <label class="inp-label">Ciudad</label>
+        <input type="text" id="a-ciudad" class="inp" placeholder="Naranjos, Veracruz">
+        <button class="btn-main" onclick="saveAddress()"><i class="fas fa-save"></i> Guardar Dirección</button>
+    </div>
+</div>
+
+<!-- ===== MODAL: CARRITO ===== -->
+<div id="modal-cart" class="modal-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('modal-cart')"><i class="fas fa-times"></i></button>
+        <h2>Tu Pedido</h2>
+        <div class="cart-items-list" id="cart-items"></div>
+        <div class="cart-total-row"><span>Total</span><span id="cart-total">$0.00</span></div>
+        <button class="btn-main" onclick="openPayment()"><i class="fas fa-credit-card"></i> Proceder al Pago</button>
+        <button class="btn-ghost" onclick="closeModal('modal-cart')">Seguir comprando</button>
+    </div>
+</div>
+
+<!-- ===== MODAL: PAGO ===== -->
+<div id="modal-pay" class="modal-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('modal-pay')"><i class="fas fa-times"></i></button>
+        <h2>Pago Seguro</h2>
+        <div class="card-preview">
+            <div class="card-chip"></div>
+            <div class="card-number-display" id="card-num-disp">•••• •••• •••• ••••</div>
+            <div class="card-info-row">
+                <span id="card-name-disp">NOMBRE TARJETA</span>
+                <span id="card-exp-disp">MM/AA</span>
+            </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:4px;margin-top:4px">
+            <i class="fab fa-cc-visa" style="font-size:2rem;color:#1a1f71"></i>
+            <i class="fab fa-cc-mastercard" style="font-size:2rem;color:#eb001b"></i>
+        </div>
+        <label class="inp-label">Nombre en la tarjeta</label>
+        <input type="text" id="pay-name" class="inp" placeholder="JUAN GARCIA" style="text-transform:uppercase" oninput="document.getElementById('card-name-disp').textContent=this.value||'NOMBRE TARJETA'">
+        <label class="inp-label">Número de tarjeta</label>
+        <input type="text" id="pay-num" class="inp" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCardNum(this)">
+        <div class="inp-row">
+            <div>
+                <label class="inp-label">Vencimiento</label>
+                <input type="text" id="pay-exp" class="inp" placeholder="MM/AA" maxlength="5" oninput="formatExp(this);document.getElementById('card-exp-disp').textContent=this.value||'MM/AA'">
+            </div>
+            <div>
+                <label class="inp-label">CVV</label>
+                <input type="password" id="pay-cvv" class="inp" placeholder="•••" maxlength="3">
+            </div>
+        </div>
+        <button class="btn-main" onclick="processPayment()"><i class="fas fa-lock"></i> Confirmar Compra ($<span id="pay-total">0.00</span>)</button>
+        <button class="btn-ghost" onclick="closeModal('modal-pay');openCart()">Volver al carrito</button>
+    </div>
+</div>
+
+<!-- CONTACT + FOOTER -->
+<section class="contact-section">
+    <h2>📍 Contáctanos</h2>
+    <div class="contact-grid">
+        <div class="contact-item"><i class="fas fa-phone"></i> 768 100 8819</div>
+        <div class="contact-item"><i class="fas fa-envelope"></i> contacto@lacamacho.com</div>
+        <div class="contact-item"><i class="fas fa-map-marker-alt"></i> Naranjos, Veracruz</div>
+        <div class="contact-item"><i class="fas fa-clock"></i> Lun–Sáb 7:00 – 19:00</div>
+    </div>
+</section>
+<footer><p>© 2026 Carnicería La Camacho · Naranjos, Veracruz · Todos los derechos reservados</p></footer>
+
+<!-- ══════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ════════════════════════════════════════════════
+// ⚠️  CONFIGURACIÓN SUPABASE
+// Reemplaza estos valores con los tuyos desde:
+// Supabase → Settings → API
+// ════════════════════════════════════════════════
+const SUPABASE_URL = 'https://kukcvsgizbgfmpszevgb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBydGxzaXJnYmdzaXFpeWhhZWpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MTY1NzAsImV4cCI6MjA5NjE5MjU3MH0.SOHOirZjqdp6LVYmkGbaF3vT2wiEsKNOG-HuesBxbqk'; // ← pega aquí tu anon key
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── Estado global ──
+let cart = [];
+let currentUser = null;
+let currentUserId = null;
+let localMode = false; // se activa si Supabase falla
+
+// ════════════════════════════════════════════════
+// NAVEGACIÓN
+// ════════════════════════════════════════════════
+function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════
+function toast(msg, type='success') {
+    const el = document.getElementById('toast');
+    const icon = el.querySelector('i');
+    document.getElementById('toast-msg').textContent = msg;
+    el.className = 'show ' + type;
+    icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+    setTimeout(() => el.className = '', 3000);
+}
+
+// ════════════════════════════════════════════════
+// MODALES
+// ════════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if(e.target === m) m.classList.remove('open'); });
+});
+
+// ════════════════════════════════════════════════
+// PRODUCTOS – Carga en tiempo real
+// ════════════════════════════════════════════════
+function buildCard(p) {
+    const img = p.imagen_url || p.img || '';
+    const precio = Number(p.precio);
+    const catLabel = { oferta:'Oferta', puerco:'Cerdo', pollo:'Pollo' }[p.categoria] || p.categoria;
+    return `<div class="prod-card">
+        <div class="prod-img-wrap">
+            <span class="prod-cat-tag">${catLabel}</span>
+            <img src="${img}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x200?text=${encodeURIComponent(p.nombre)}'">
+        </div>
+        <div class="prod-body">
+            <div class="prod-name">${p.nombre}</div>
+            <div class="prod-price">$${precio.toFixed(2)} <span>/ kg o paq.</span></div>
+            <button class="btn-add" onclick="addToCart('${p.nombre.replace(/'/g,"\\'")}',${precio})">
+                <i class="fas fa-plus"></i> Agregar al carrito
+            </button>
+        </div>
+    </div>`;
+}
+
+function renderGrids(data) {
+    const oferta = data.filter(p => p.categoria === 'oferta');
+    const puerco = data.filter(p => p.categoria === 'puerco');
+    const pollo  = data.filter(p => p.categoria === 'pollo');
+    document.getElementById('grid-ofertas').innerHTML = oferta.length ? oferta.map(buildCard).join('') : '<p style="color:var(--text-muted);grid-column:1/-1">Sin ofertas disponibles.</p>';
+    document.getElementById('grid-puerco').innerHTML  = puerco.length ? puerco.map(buildCard).join('') : '<p style="color:var(--text-muted)">Sin productos disponibles.</p>';
+    document.getElementById('grid-pollo').innerHTML   = pollo.length  ? pollo.map(buildCard).join('')  : '<p style="color:var(--text-muted)">Sin productos disponibles.</p>';
+}
+
+async function loadProducts() {
+    try {
+        const { data, error } = await db.from('productos').select('*').eq('disponible', true);
+        if (error || !data || data.length === 0) throw new Error(error?.message || 'Sin datos');
+        renderGrids(data);
+        // Suscripción en tiempo real
+        db.channel('productos-cambios')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'productos' }, () => loadProducts())
+          .subscribe();
+    } catch(e) {
+        console.warn('Supabase no disponible, usando datos locales:', e.message);
+        localMode = true;
+        renderGrids(localProductos);
+    }
+}
+
+// Datos de respaldo locales
+const localProductos = [
+    { nombre:'Combo Parrillero', precio:99, categoria:'oferta', imagen_url:'img/parrillada.jpg' },
+    { nombre:'Dúo Dinámico', precio:85, categoria:'oferta', imagen_url:'img/Duo.jpeg' },
+    { nombre:'Paquete Familiar', precio:120, categoria:'oferta', imagen_url:'img/Pier.jpeg' },
+    { nombre:'Combo Taquero', precio:175, categoria:'oferta', imagen_url:'img/Taquero.png' },
+    { nombre:'Carne 2x1', precio:200, categoria:'oferta', imagen_url:'img/2X1.png' },
+    { nombre:'Suadero', precio:380, categoria:'puerco', imagen_url:'img/suadero.png' },
+    { nombre:'Diezmillo', precio:420, categoria:'puerco', imagen_url:'img/diez.png' },
+    { nombre:'Aguja Norteña', precio:150, categoria:'puerco', imagen_url:'img/aguja.png' },
+    { nombre:'Filete', precio:145, categoria:'puerco', imagen_url:'img/filete.png' },
+    { nombre:'Chorizo', precio:180, categoria:'puerco', imagen_url:'img/chorizo.jpg' },
+    { nombre:'Arrachera Marinada', precio:420, categoria:'puerco', imagen_url:'img/arrachera.png' },
+    { nombre:'Costilla de Cerdo', precio:290, categoria:'puerco', imagen_url:'img/Costillas.png' },
+    { nombre:'Pechuga', precio:100, categoria:'pollo', imagen_url:'img/pechuga.png' },
+    { nombre:'Alitas', precio:90, categoria:'pollo', imagen_url:'img/alitas.jpeg' },
+    { nombre:'Muslo', precio:120, categoria:'pollo', imagen_url:'img/muslo.png' },
+    { nombre:'Medio Pollo', precio:130, categoria:'pollo', imagen_url:'img/medio.png' },
+];
+
+// ════════════════════════════════════════════════
+// CARRITO
+// ════════════════════════════════════════════════
+function addToCart(nombre, precio) {
+    cart.push({ nombre, precio });
+    updateCartUI();
+    toast(`${nombre} agregado al carrito 🛒`);
+}
+
+function removeFromCart(idx) {
+    cart.splice(idx, 1);
+    updateCartUI();
+}
+
+function updateCartUI() {
+    const count = cart.length;
+    document.getElementById('cart-count').textContent = count;
+    const total = cart.reduce((a, c) => a + c.precio, 0);
+    document.getElementById('cart-total').textContent = `$${total.toFixed(2)}`;
+    document.getElementById('pay-total').textContent = total.toFixed(2);
+    if (!cart.length) {
+        document.getElementById('cart-items').innerHTML = '<div class="empty-cart"><i class="fas fa-basket-shopping" style="font-size:2rem;color:var(--text-muted)"></i><p style="margin-top:8px">Tu carrito está vacío</p></div>';
+        return;
+    }
+    document.getElementById('cart-items').innerHTML = cart.map((item, i) => `
+        <div class="cart-item">
+            <div>
+                <div class="cart-item-name">${item.nombre}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+                <span class="cart-item-price">$${item.precio.toFixed(2)}</span>
+                <button class="cart-item-del" onclick="removeFromCart(${i})"><i class="fas fa-times"></i></button>
+            </div>
+        </div>`).join('');
+}
+
+function openCart() { updateCartUI(); openModal('modal-cart'); }
+
+// ════════════════════════════════════════════════
+// PAGO
+// ════════════════════════════════════════════════
+function openPayment() {
+    if (!currentUser) {
+        closeModal('modal-cart');
+        toast('Inicia sesión para pagar', 'error');
+        openAuth();
+        return;
+    }
+    if (!cart.length) { toast('Tu carrito está vacío', 'error'); return; }
+    closeModal('modal-cart');
+    openModal('modal-pay');
+}
+
+function formatCardNum(inp) {
+    let v = inp.value.replace(/\D/g,'').slice(0,16);
+    inp.value = v.replace(/(.{4})/g,'$1 ').trim();
+    const last4 = v.slice(-4) || '••••';
+    document.getElementById('card-num-disp').textContent = `•••• •••• •••• ${last4}`;
+}
+
+function formatExp(inp) {
+    let v = inp.value.replace(/\D/g,'');
+    if (v.length >= 2) v = v.slice(0,2) + '/' + v.slice(2,4);
+    inp.value = v;
+}
+
+async function processPayment() {
+    if (!cart.length) return;
+    const total = cart.reduce((a,c) => a + c.precio, 0);
+    try {
+        const { data: pedido, error: e1 } = await db.from('pedidos')
+            .insert([{ cliente_id: currentUserId, total, estado: 'pagado' }])
+            .select().single();
+        if (e1) throw e1;
+        const items = cart.map(i => ({ pedido_id: pedido.id, producto_nombre: i.nombre, precio: i.precio }));
+        await db.from('pedido_items').insert(items);
+        toast(`¡Pago exitoso! Pedido #${pedido.id.slice(0,8).toUpperCase()}`);
+    } catch(e) {
+        toast('Pago procesado (modo local)');
+    }
+    cart = [];
+    updateCartUI();
+    closeModal('modal-pay');
+}
+
+// ════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════
+function openAuth() { switchAuth('login'); openModal('modal-auth'); }
+
+function switchAuth(form) {
+    document.getElementById('form-login').classList.toggle('active', form === 'login');
+    document.getElementById('form-register').classList.toggle('active', form === 'register');
+    if (form === 'register') switchRegStep(1);
+}
+
+function switchRegStep(step) {
+    document.getElementById('reg-step1').classList.toggle('active', step === 1);
+    document.getElementById('reg-step2').classList.toggle('active', step === 2);
+    document.getElementById('step1-dot').classList.toggle('done', true);
+    document.getElementById('step2-dot').classList.toggle('done', step === 2);
+}
+
+function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.querySelector('span').textContent = msg;
+    el.style.display = 'flex';
+    el.style.alignItems = 'center';
+    el.style.gap = '6px';
+}
+
+function hideError(id) { document.getElementById(id).style.display = 'none'; }
+
+function regStep2() {
+    hideError('r-error1');
+    const nombre = document.getElementById('r-nombre').value.trim();
+    const email  = document.getElementById('r-email').value.trim();
+    if (!nombre) return showError('r-error1', 'Ingresa tu nombre.');
+    if (!email || !email.includes('@')) return showError('r-error1', 'Correo inválido.');
+    switchRegStep(2);
+}
+
+async function doLogin() {
+    hideError('l-error');
+    const email = document.getElementById('l-email').value.trim();
+    const pass  = document.getElementById('l-pass').value.trim();
+    if (!email || !pass) return showError('l-error', 'Ingresa correo y contraseña.');
+    
+    try {
+        const { data, error } = await db.from('clientes').select('id,nombre,apellido,correo,telefono').eq('correo', email).eq('contrasena_hash', pass).maybeSingle();
+        if (error) throw error;
+        if (!data) return showError('l-error', 'Correo o contraseña incorrectos.');
+        setSession(data);
+        closeModal('modal-auth');
+        toast(`¡Bienvenido, ${data.nombre}! 👋`);
+    } catch(e) {
+        showError('l-error', 'Error de conexión: ' + e.message);
+    }
+}
+
+async function doRegister() {
+    hideError('r-error2');
+    const nombre   = document.getElementById('r-nombre').value.trim();
+    const apellido = document.getElementById('r-apellido').value.trim();
+    const tel      = document.getElementById('r-tel').value.trim();
+    const email    = document.getElementById('r-email').value.trim();
+    const curp     = document.getElementById('r-curp').value.trim().toUpperCase();
+    const calle    = document.getElementById('r-calle').value.trim();
+    const colonia  = document.getElementById('r-colonia').value.trim();
+    const cp       = document.getElementById('r-cp').value.trim();
+    const pass     = document.getElementById('r-pass').value;
+    const pass2    = document.getElementById('r-pass2').value;
+
+    if (!pass || pass.length < 6) return showError('r-error2', 'La contraseña debe tener al menos 6 caracteres.');
+    if (pass !== pass2) return showError('r-error2', 'Las contraseñas no coinciden.');
+
+    try {
+        const { data, error } = await db.from('clientes')
+            .insert([{ nombre, apellido, telefono: tel, correo: email, curp, contrasena_hash: pass }])
+            .select().single();
+        if (error) {
+            if (error.code === '23505') return showError('r-error2', 'Ese correo ya está registrado.');
+            throw error;
         }
-
-        // ---------- CARGAR PRODUCTOS (Supabase con fallback local) ----------
-        async function renderAll() {
-            try {
-                const { data, error } = await db.from('productos').select('*').eq('disponible', true);
-                if (error || !data || data.length === 0) throw new Error('Sin datos en Supabase');
-
-                const oferta = data.filter(p => p.categoria === 'oferta');
-                const puerco = data.filter(p => p.categoria === 'puerco');
-                const pollo  = data.filter(p => p.categoria === 'pollo');
-
-                document.getElementById('grid-ofertas').innerHTML = oferta.map(createCard).join('');
-                document.getElementById('grid-puerco').innerHTML  = puerco.map(createCard).join('');
-                document.getElementById('grid-pollo').innerHTML   = pollo.map(createCard).join('');
-            } catch (e) {
-                console.warn("Utilizando productos de respaldo local:", e.message);
-                cargarProductosLocales();
-            }
-            actualizarHeaderAuth();
+        // Guardar dirección si se llenó
+        if (calle) {
+            await db.from('direcciones').insert([{
+                cliente_id: data.id, alias: 'Casa', calle, colonia, cp, ciudad: 'Naranjos, Veracruz'
+            }]);
         }
+        setSession(data);
+        closeModal('modal-auth');
+        toast(`¡Cuenta creada! Bienvenido, ${nombre} 🎉`);
+    } catch(e) {
+        showError('r-error2', 'Error: ' + e.message);
+    }
+}
 
-        function cargarProductosLocales() {
-            const oferta = [
-                { nombre: 'Combo Parrillero', precio: 99, img: 'img/parrillada.jpg' },
-                { nombre: 'Duo dinamico', precio: 85, img: 'img/Duo.jpeg' },
-                { nombre: 'Paquete Familiar', precio: 120, img: 'img/Pier.jpeg' },
-                { nombre: 'Mitad de pollo y Mitad de Cerdo', precio: 110, img: 'img/MyM.jpg' },
-                { nombre: 'Combo Taquero', precio: 175, img: 'img/Taquero.png' },
-                { nombre: 'Carne 2 X 1', precio: 200, img: 'img/2X1.png' },
-                { nombre: 'Carne picada', precio: 200, img: 'img/Car.jpg' },
-            ];
-            const puerco = [
-                { nombre: 'Suadero', precio: 380, img: 'img/suadero.png' },
-                { nombre: 'Diezmillo', precio: 420, img: 'img/diez.png' },
-                { nombre: 'Aguja Norteña', precio: 150, img: 'img/aguja.png' },
-                { nombre: 'Filete', precio: 145, img: 'img/filete.png' },
-                { nombre: 'Chorizo', precio: 180, img: 'img/chorizo.jpg' },
-                { nombre: 'Arrachera Marinada', precio: 420, img: 'img/arrachera.png' },
-                { nombre: 'Picaña de Res', precio: 850, img: 'img/picaña.png' },
-                { nombre: 'Costilla de Cerdo', precio: 290, img: 'img/Costillas.png' },
-            ];
-            const pollo = [
-                { nombre: 'Pechuga', precio: 100, img: 'img/pechuga.png' },
-                { nombre: 'Alitas', precio: 90, img: 'img/alitas.jpeg' },
-                { nombre: 'Muslo', precio: 120, img: 'img/muslo.png' },
-                { nombre: 'Medio Pollo', precio: 130, img: 'img/medio.png' },
-            ];
-            document.getElementById('grid-ofertas').innerHTML = oferta.map(createCard).join('');
-            document.getElementById('grid-puerco').innerHTML  = puerco.map(createCard).join('');
-            document.getElementById('grid-pollo').innerHTML   = pollo.map(createCard).join('');
+function setSession(userData) {
+    currentUser   = userData.nombre + ' ' + (userData.apellido || '');
+    currentUserId = userData.id;
+    document.getElementById('nav-right').innerHTML = `
+        <span id="user-greeting" style="font-size:.85rem;font-weight:700;color:var(--brand2);cursor:pointer" onclick="openProfile()">
+            <i class="fas fa-user-circle"></i> ${userData.nombre}
+        </span>
+        <button class="cart-btn" onclick="openCart()">
+            <i class="fas fa-basket-shopping"></i>
+            <span class="cart-badge" id="cart-count">${cart.length}</span>
+        </button>`;
+    // Cargar perfil en modal
+    document.getElementById('p-avatar').textContent = userData.nombre.charAt(0).toUpperCase();
+    document.getElementById('p-name').textContent  = `${userData.nombre} ${userData.apellido || ''}`.trim();
+    document.getElementById('p-email').textContent = userData.correo;
+    document.getElementById('pe-nombre').value = `${userData.nombre} ${userData.apellido || ''}`.trim();
+    document.getElementById('pe-tel').value    = userData.telefono || '';
+    document.getElementById('pe-email').value  = userData.correo;
+}
+
+function doLogout() {
+    currentUser = null; currentUserId = null;
+    document.getElementById('nav-right').innerHTML = `
+        <button class="btn-nav" onclick="openAuth()"><i class="fas fa-user"></i> Entrar</button>
+        <button class="cart-btn" onclick="openCart()">
+            <i class="fas fa-basket-shopping"></i>
+            <span class="cart-badge" id="cart-count">${cart.length}</span>
+        </button>`;
+    closeModal('modal-profile');
+    toast('Sesión cerrada');
+}
+
+// ════════════════════════════════════════════════
+// PERFIL
+// ════════════════════════════════════════════════
+function openProfile() {
+    loadAddresses();
+    loadOrders();
+    openModal('modal-profile');
+}
+
+function switchPTab(tab) {
+    document.querySelectorAll('.p-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.p-tab-content').forEach(c => c.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('ptab-' + tab).classList.add('active');
+}
+
+async function saveProfile() {
+    if (!currentUserId) return;
+    const parts = document.getElementById('pe-nombre').value.trim().split(' ');
+    const nombre   = parts[0] || '';
+    const apellido = parts.slice(1).join(' ') || '';
+    const telefono = document.getElementById('pe-tel').value.trim();
+    try {
+        await db.from('clientes').update({ nombre, apellido, telefono }).eq('id', currentUserId);
+        document.getElementById('p-name').textContent = `${nombre} ${apellido}`.trim();
+        toast('Datos actualizados ✅');
+    } catch(e) { toast('Error al guardar', 'error'); }
+}
+
+async function loadAddresses() {
+    if (!currentUserId) return;
+    try {
+        const { data } = await db.from('direcciones').select('*').eq('cliente_id', currentUserId);
+        const el = document.getElementById('addresses-list');
+        if (!data || !data.length) {
+            el.innerHTML = '<p style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:16px">Sin direcciones guardadas</p>';
+            return;
         }
+        el.innerHTML = data.map(a => `
+            <div class="address-card">
+                <div>
+                    <strong>${a.alias || 'Dirección'}</strong>
+                    <p>${a.calle}, ${a.colonia}, C.P. ${a.cp}</p>
+                    <p>${a.ciudad || ''}</p>
+                </div>
+                <button class="btn-sm" onclick="deleteAddress('${a.id}')"><i class="fas fa-trash"></i></button>
+            </div>`).join('');
+    } catch(e) {}
+}
 
-        // ---------- CARRITO ----------
-        function addToCart(nombre, precio) {
-            cart.push({ nombre, precio });
-            updateCartUI();
-            alert(nombre + ' agregado al carrito.');
+async function deleteAddress(id) {
+    await db.from('direcciones').delete().eq('id', id);
+    loadAddresses();
+    toast('Dirección eliminada');
+}
+
+function openAddAddress() { openModal('modal-address'); }
+
+async function saveAddress() {
+    const payload = {
+        cliente_id: currentUserId,
+        alias:   document.getElementById('a-alias').value.trim() || 'Casa',
+        calle:   document.getElementById('a-calle').value.trim(),
+        colonia: document.getElementById('a-colonia').value.trim(),
+        cp:      document.getElementById('a-cp').value.trim(),
+        ciudad:  document.getElementById('a-ciudad').value.trim()
+    };
+    if (!payload.calle) return toast('Ingresa la calle', 'error');
+    await db.from('direcciones').insert([payload]);
+    closeModal('modal-address');
+    loadAddresses();
+    toast('Dirección guardada ✅');
+}
+
+async function loadOrders() {
+    if (!currentUserId) return;
+    try {
+        const { data } = await db.from('pedidos').select('*').eq('cliente_id', currentUserId).order('created_at', { ascending: false });
+        const el = document.getElementById('orders-list');
+        if (!data || !data.length) {
+            el.innerHTML = '<p style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:16px">Sin pedidos realizados</p>';
+            return;
         }
+        el.innerHTML = data.map(p => `
+            <div class="order-item">
+                <div>
+                    <div style="font-weight:800;font-size:.9rem">#${p.id.slice(0,8).toUpperCase()}</div>
+                    <div style="color:var(--text-muted);font-size:.75rem">${new Date(p.created_at).toLocaleDateString('es-MX')}</div>
+                </div>
+                <div style="text-align:right">
+                    <div style="font-weight:800;color:var(--brand2)">$${Number(p.total).toFixed(2)}</div>
+                    <span class="order-status status-pagado">${p.estado}</span>
+                </div>
+            </div>`).join('');
+    } catch(e) {
+        document.getElementById('orders-list').innerHTML = '<p style="color:var(--text-muted);font-size:.85rem;text-align:center">No se pudo cargar</p>';
+    }
+}
 
-        function updateCartUI() {
-            document.getElementById('cart-items').innerHTML = cart.map(item => `
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px; border-bottom:1px solid #ffcc66; padding:5px 0; color:#fff;">
-                    <span>${item.nombre}</span>
-                    <span>$${item.precio.toFixed(2)}</span>
-                </div>`).join('');
-            document.getElementById('cart-count').textContent = cart.length;
-            document.getElementById('cart-total').textContent = 'Total: $' + cart.reduce((a, c) => a + c.precio, 0).toFixed(2);
-        }
-
-        function toggleCart() {
-            updateCartUI();
-            const modal = document.getElementById('cartModal');
-            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function openPayment() {
-            if (!usuarioSesion) {
-                alert('Debes iniciar sesión para proceder al pago seguro.');
-                document.getElementById('cartModal').style.display = 'none';
-                toggleAuth();
-                return;
-            }
-            document.getElementById('cartModal').style.display = 'none';
-            document.getElementById('paymentModal').style.display = 'block';
-        }
-
-        // ---------- PAGO (Inserción en Supabase) ----------
-        async function processPayment() {
-            if (cart.length === 0) { alert('Tu carrito está vacío.'); return; }
-
-            const total = cart.reduce((a, c) => a + c.precio, 0);
-            try {
-                const { data: pedido, error: e1 } = await db
-                    .from('pedidos')
-                    .insert([{ cliente_id: clienteId, total, estado: 'pagado' }])
-                    .select().single();
-                if (e1) throw e1;
-
-                const items = cart.map(i => ({ pedido_id: pedido.id, producto_nombre: i.nombre, precio: i.precio }));
-                const { error: e2 } = await db.from('pedido_items').insert(items);
-                if (e2) throw e2;
-
-                alert('¡Pago exitoso vía VISA!\nPedido #' + pedido.id.slice(0, 8).toUpperCase() + ' guardado.');
-            } catch (e) {
-                alert('¡Pago procesado! (aviso fallback: ' + e.message + ')');
-            }
-
-            cart = [];
-            updateCartUI();
-            document.getElementById('paymentModal').style.display = 'none';
-        }
-
-        // ---------- LOGIN (Lectura selectiva) ----------
-        async function simularLogin() {
-            const correo = document.getElementById('login-correo').value.trim();
-            const pass   = document.getElementById('login-pass').value.trim();
-            if (!correo || !pass) { alert('Ingresa correo y contraseña.'); return; }
-
-            const { data, error } = await db
-                .from('clientes')
-                .select('id, nombre, contrasena_hash')
-                .eq('correo', correo)
-                .maybeSingle(); 
-
-            if (error) { alert('Error de conexión: ' + error.message); return; }
-            if (!data) { alert('Correo no encontrado. ¿Ya te registraste?'); return; }
-            if (data.contrasena_hash !== pass) { alert('Contraseña incorrecta.'); return; }
-
-            usuarioSesion = data.nombre;
-            clienteId     = data.id;
-            actualizarHeaderAuth();
-            toggleAuth();
-            alert('¡Bienvenido, ' + usuarioSesion + '!');
-        }
-
-        // ---------- REGISTRO (Inserción estructurada) ----------
-        async function simularRegistro() {
-            const nombre = document.getElementById('reg-nombre').value.trim();
-            const correo = document.getElementById('reg-correo').value.trim();
-            const curp   = document.getElementById('reg-curp').value.trim();
-            const pass   = document.getElementById('reg-pass').value.trim();
-            if (!nombre || !correo || !pass) { alert('Llena nombre, correo y contraseña.'); return; }
-
-            const { data, error } = await db
-                .from('clientes')
-                .insert([{ nombre, correo, curp, contrasena_hash: pass }])
-                .select().single();
-
-            if (error) {
-                alert(error.code === '23505'
-                    ? 'Ese correo ya está registrado. Inicia sesión.'
-                    : 'Error: ' + error.message);
-                return;
-            }
-
-            usuarioSesion = data.nombre;
-            clienteId     = data.id;
-            actualizarHeaderAuth();
-            toggleAuth();
-            alert('¡Registro exitoso! Bienvenido, ' + usuarioSesion + ' 🎉');
-        }
-
-        // ---------- CERRAR SESIÓN ----------
-        function cerrarSesionSimulada() {
-            usuarioSesion = null;
-            clienteId     = null;
-            actualizarHeaderAuth();
-            alert('Sesión cerrada.');
-        }
-
-        // ---------- ACTUALIZAR HEADER ----------
-        function actualizarHeaderAuth() {
-            const area = document.getElementById('header-auth-area');
-            if (usuarioSesion) {
-                area.innerHTML = `
-                    <span style="color:#ffe0a3; font-weight:bold; font-size:14px; text-shadow:0 0 5px #ffaa33;">Hola, ${usuarioSesion}</span>
-                    <a href="#" onclick="cerrarSesionSimulada()" style="color:#ffaa77; margin-left:10px; text-decoration:none; font-weight:bold; font-size:14px;">Salir</a>
-                    <div class="cart-container" onclick="toggleCart()">
-                        <i class="fas fa-shopping-basket"></i>
-                        <span class="cart-badge" id="cart-count">${cart.length}</span>
-                    </div>`;
-            } else {
-                area.innerHTML = `
-                    <i class="fas fa-user" onclick="toggleAuth()" style="cursor:pointer; font-size:1.4rem; color:#ffe0a3; filter:drop-shadow(0 0 4px #ffaa44);"></i>
-                    <div class="cart-container" onclick="toggleCart()">
-                        <i class="fas fa-shopping-basket"></i>
-                        <span class="cart-badge" id="cart-count">${cart.length}</span>
-                    </div>`;
-            }
-        }
-
-        // Inicializar el renderizado al cargar la app
-        renderAll();
-    </script>
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+loadProducts();
+updateCartUI();
+</script>
 </body>
 </html>

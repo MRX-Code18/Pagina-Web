@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin · Carnicería La Camacho</title>
+    <link rel="shortcut icon" href="img/Logo(0).png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- jsPDF para exportación -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <!-- Chart.js para gráficas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --brand:#FF6B35; --brand2:#FFD166; --dark:#0D1117; --dark2:#161B22; --dark3:#1C2333;
+            --glass-border:rgba(255,107,53,0.25); --text:#E6EDF3; --text-muted:#8B949E;
+            --green:#3FB950; --red:#F85149; --yellow:#E3B341; --blue:#58A6FF;
+        }
+        html { scroll-behavior:smooth; }
+        body { font-family:'Nunito',sans-serif; background:var(--dark); color:var(--text); min-height:100vh; }
+
+        /* LOGIN SCREEN */
+        #login-screen { position:fixed; inset:0; z-index:9999; background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(255,107,53,0.12),var(--dark)); display:flex; align-items:center; justify-content:center; padding:20px; }
+        .login-box { background:var(--dark2); border:1px solid var(--glass-border); border-radius:28px; padding:40px; width:100%; max-width:400px; box-shadow:0 40px 80px rgba(0,0,0,0.6); }
+        .login-logo { text-align:center; margin-bottom:28px; }
+        .login-logo img { width:70px; height:70px; border-radius:50%; border:2px solid var(--brand); box-shadow:0 0 24px rgba(255,107,53,0.4); }
+        .login-logo h1 { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:3px; background:linear-gradient(135deg,#FFD166,#FF6B35); -webkit-background-clip:text; background-clip:text; color:transparent; margin-top:10px; }
+        .login-logo p { font-size:.8rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:2px; }
+        .inp { width:100%; padding:13px 16px; background:var(--dark3); border:1px solid rgba(255,255,255,0.1); border-radius:12px; color:var(--text); font-family:'Nunito',sans-serif; font-size:.9rem; margin:8px 0; outline:none; transition:.2s; }
+        .inp:focus { border-color:var(--brand); box-shadow:0 0 0 3px rgba(255,107,53,0.15); }
+        .inp-label { font-size:.75rem; font-weight:700; color:var(--brand2); text-transform:uppercase; letter-spacing:.5px; margin-top:10px; display:block; }
+        .btn-main { width:100%; background:linear-gradient(135deg,var(--brand),#e05a2b); color:white; border:none; padding:14px; border-radius:12px; font-weight:800; cursor:pointer; font-size:1rem; margin-top:12px; transition:.2s; font-family:'Nunito',sans-serif; }
+        .btn-main:hover { transform:scale(1.01); box-shadow:0 8px 24px rgba(255,107,53,0.4); }
+        .error-box { background:rgba(248,81,73,0.1); border:1px solid rgba(248,81,73,0.4); border-radius:10px; padding:10px 14px; font-size:.85rem; color:var(--red); margin-top:10px; display:none; }
+
+        /* ADMIN SHELL */
+        #admin-shell { display:none; }
+
+        /* SIDEBAR */
+        .sidebar { width:240px; background:var(--dark2); border-right:1px solid rgba(255,255,255,0.06); height:100vh; position:fixed; left:0; top:0; z-index:100; display:flex; flex-direction:column; }
+        .sidebar-logo { padding:20px; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; gap:12px; }
+        .sidebar-logo img { width:40px; height:40px; border-radius:50%; border:2px solid var(--brand); }
+        .sidebar-logo span { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:2px; background:linear-gradient(135deg,#FFD166,#FF6B35); -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .sidebar-badge { background:var(--red); color:white; font-size:9px; font-weight:800; padding:2px 6px; border-radius:4px; text-transform:uppercase; letter-spacing:1px; }
+        nav { flex:1; padding:16px 12px; overflow-y:auto; }
+        .nav-section { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); padding:8px 10px 6px; }
+        .nav-item { display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; cursor:pointer; color:var(--text-muted); font-weight:700; font-size:.88rem; transition:.2s; margin-bottom:2px; }
+        .nav-item:hover { background:rgba(255,255,255,0.04); color:var(--text); }
+        .nav-item.active { background:rgba(255,107,53,0.15); color:var(--brand); }
+        .nav-item i { width:18px; text-align:center; }
+        .sidebar-footer { padding:16px; border-top:1px solid rgba(255,255,255,0.06); }
+        .admin-info { display:flex; align-items:center; gap:10px; }
+        .admin-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--brand),#e05a2b); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.9rem; flex-shrink:0; }
+        .admin-name { font-size:.8rem; font-weight:800; }
+        .admin-role { font-size:.7rem; color:var(--text-muted); }
+        .btn-logout { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:.8rem; margin-top:10px; padding:8px 0; width:100%; text-align:left; display:flex; align-items:center; gap:8px; transition:.2s; font-family:'Nunito',sans-serif; font-weight:700; }
+        .btn-logout:hover { color:var(--red); }
+
+        /* MAIN CONTENT */
+        .main-content { margin-left:240px; padding:28px 30px; min-height:100vh; }
+        .page-header { margin-bottom:28px; }
+        .page-header h1 { font-family:'Bebas Neue',sans-serif; font-size:2.2rem; letter-spacing:2px; }
+        .page-header p { color:var(--text-muted); font-size:.9rem; margin-top:4px; }
+
+        /* VIEWS */
+        .admin-view { display:none; animation:fadein .3s ease; }
+        .admin-view.active { display:block; }
+        @keyframes fadein { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+        /* STAT CARDS */
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:18px; margin-bottom:28px; }
+        .stat-card { background:var(--dark2); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:20px; position:relative; overflow:hidden; }
+        .stat-card::after { content:''; position:absolute; top:-30px; right:-30px; width:100px; height:100px; border-radius:50%; opacity:.1; }
+        .stat-card.green::after { background:var(--green); }
+        .stat-card.orange::after { background:var(--brand); }
+        .stat-card.yellow::after { background:var(--yellow); }
+        .stat-card.blue::after { background:var(--blue); }
+        .stat-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; margin-bottom:14px; }
+        .stat-card.green .stat-icon { background:rgba(63,185,80,0.15); color:var(--green); }
+        .stat-card.orange .stat-icon { background:rgba(255,107,53,0.15); color:var(--brand); }
+        .stat-card.yellow .stat-icon { background:rgba(227,179,65,0.15); color:var(--yellow); }
+        .stat-card.blue .stat-icon { background:rgba(88,166,255,0.15); color:var(--blue); }
+        .stat-value { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:1px; }
+        .stat-label { font-size:.8rem; color:var(--text-muted); font-weight:700; margin-top:4px; }
+
+        /* PANELS */
+        .panel { background:var(--dark2); border:1px solid rgba(255,255,255,0.06); border-radius:16px; overflow:hidden; margin-bottom:24px; }
+        .panel-header { padding:18px 20px; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:space-between; }
+        .panel-header h3 { font-weight:800; font-size:1rem; }
+        .panel-body { padding:20px; }
+
+        /* TABLE */
+        .tbl-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; font-size:.86rem; }
+        th { background:var(--dark3); color:var(--brand2); padding:12px 14px; font-weight:800; text-transform:uppercase; font-size:.75rem; letter-spacing:.5px; border-bottom:1px solid rgba(255,255,255,0.06); text-align:left; }
+        td { padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
+        tr:last-child td { border-bottom:none; }
+        tr:hover td { background:rgba(255,255,255,0.02); }
+        .img-thumb { width:40px; height:40px; border-radius:8px; object-fit:cover; border:1px solid rgba(255,107,53,0.3); }
+        .badge { display:inline-flex; align-items:center; padding:3px 10px; border-radius:20px; font-size:.75rem; font-weight:800; text-transform:uppercase; letter-spacing:.5px; }
+        .b-oferta { background:rgba(142,68,173,0.2); color:#c77dff; }
+        .b-puerco { background:rgba(255,107,53,0.2); color:var(--brand); }
+        .b-pollo  { background:rgba(63,185,80,0.2);  color:var(--green); }
+        .b-pagado { background:rgba(63,185,80,0.15); color:var(--green); }
+        .b-pendiente { background:rgba(227,179,65,0.15); color:var(--yellow); }
+        .btn-row { display:flex; gap:6px; }
+        .btn-icon { width:30px; height:30px; border-radius:8px; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:.8rem; transition:.2s; }
+        .btn-edit { background:rgba(227,179,65,0.15); color:var(--yellow); border:1px solid rgba(227,179,65,0.3); }
+        .btn-edit:hover { background:var(--yellow); color:var(--dark); }
+        .btn-del  { background:rgba(248,81,73,0.15); color:var(--red); border:1px solid rgba(248,81,73,0.3); }
+        .btn-del:hover  { background:var(--red); color:white; }
+
+        /* FORM PRODUCT */
+        .form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; }
+        .form-group { display:flex; flex-direction:column; gap:6px; }
+        .form-group label { font-size:.75rem; font-weight:800; color:var(--brand2); text-transform:uppercase; letter-spacing:.5px; }
+        .form-input { padding:12px 14px; background:var(--dark3); border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--text); font-family:'Nunito',sans-serif; font-size:.9rem; outline:none; transition:.2s; }
+        .form-input:focus { border-color:var(--brand); box-shadow:0 0 0 3px rgba(255,107,53,0.15); }
+        select.form-input option { background:var(--dark3); }
+        .btn-save { background:linear-gradient(135deg,var(--green),#2ea043); color:white; border:none; padding:12px 24px; border-radius:10px; font-weight:800; cursor:pointer; font-family:'Nunito',sans-serif; font-size:.9rem; display:inline-flex; align-items:center; gap:8px; transition:.2s; }
+        .btn-save:hover { transform:scale(1.02); box-shadow:0 4px 14px rgba(63,185,80,0.3); }
+        .btn-cancel { background:none; border:1px solid rgba(255,255,255,0.1); color:var(--text-muted); padding:12px 24px; border-radius:10px; font-weight:700; cursor:pointer; font-family:'Nunito',sans-serif; font-size:.9rem; transition:.2s; }
+        .btn-cancel:hover { border-color:var(--red); color:var(--red); }
+
+        /* REPORTS */
+        .report-filters { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:24px; }
+        .filter-group { display:flex; flex-direction:column; gap:6px; }
+        .filter-group label { font-size:.75rem; font-weight:800; color:var(--brand2); text-transform:uppercase; }
+        .btn-report { background:linear-gradient(135deg,var(--brand),#e05a2b); color:white; border:none; padding:12px 22px; border-radius:10px; font-weight:800; cursor:pointer; font-family:'Nunito',sans-serif; font-size:.9rem; display:flex; align-items:center; gap:8px; transition:.2s; }
+        .btn-report:hover { transform:scale(1.02); box-shadow:0 4px 14px rgba(255,107,53,0.3); }
+        .btn-pdf { background:rgba(248,81,73,0.15); color:var(--red); border:1px solid rgba(248,81,73,0.3); padding:12px 22px; border-radius:10px; font-weight:800; cursor:pointer; font-family:'Nunito',sans-serif; font-size:.9rem; display:flex; align-items:center; gap:8px; transition:.2s; }
+        .btn-pdf:hover { background:var(--red); color:white; }
+        .charts-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:24px; margin-bottom:24px; }
+        .chart-card { background:var(--dark2); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:20px; }
+        .chart-card h4 { font-weight:800; margin-bottom:16px; color:var(--text-muted); font-size:.85rem; text-transform:uppercase; letter-spacing:.5px; }
+        .report-summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:24px; }
+        .summary-item { background:var(--dark2); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:18px; text-align:center; }
+        .summary-value { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; color:var(--brand2); }
+        .summary-label { font-size:.75rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-top:4px; }
+
+        /* TOAST */
+        #toast { position:fixed; bottom:30px; right:30px; background:var(--dark2); border:1px solid var(--glass-border); color:var(--text); padding:14px 20px; border-radius:14px; font-weight:700; font-size:.9rem; z-index:2000; display:flex; align-items:center; gap:10px; box-shadow:0 10px 30px rgba(0,0,0,0.5); transform:translateY(100px); opacity:0; transition:.3s cubic-bezier(.34,1.56,.64,1); pointer-events:none; }
+        #toast.show { transform:translateY(0); opacity:1; }
+
+        /* MODAL */
+        .modal-overlay { display:none; position:fixed; inset:0; z-index:500; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center; padding:20px; }
+        .modal-overlay.open { display:flex; }
+        .modal-box { background:var(--dark2); border:1px solid var(--glass-border); border-radius:20px; padding:28px; width:100%; max-width:500px; box-shadow:0 30px 60px rgba(0,0,0,0.6); animation:fadein .3s ease; }
+        .modal-box h2 { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:2px; color:var(--brand2); margin-bottom:16px; }
+        .modal-close { float:right; background:none; border:none; color:var(--text-muted); font-size:1.3rem; cursor:pointer; margin-top:-4px; }
+        .modal-close:hover { color:var(--red); }
+        .input-field { width:100%; padding:12px 14px; background:var(--dark3); border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--text); font-family:'Nunito',sans-serif; font-size:.9rem; margin:6px 0 12px; outline:none; transition:.2s; }
+        .input-field:focus { border-color:var(--brand); }
+        .field-label { font-size:.75rem; font-weight:800; color:var(--brand2); text-transform:uppercase; letter-spacing:.5px; }
+
+        @media(max-width:900px) { .sidebar{display:none} .main-content{margin-left:0} }
+    </style>
+</head>
+<body>
+<div id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg"></span></div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- LOGIN SCREEN -->
+<!-- ══════════════════════════════════════════ -->
+<div id="login-screen">
+    <div class="login-box">
+        <div class="login-logo">
+            <img src="img/Logo(0).png" onerror="this.src='https://via.placeholder.com/70'">
+            <h1>La Camacho</h1>
+            <p><i class="fas fa-shield-alt"></i> Panel Administrador</p>
+        </div>
+        <label class="inp-label">Usuario</label>
+        <input type="text" id="a-user" class="inp" placeholder="admin" onkeydown="if(event.key==='Enter')doAdminLogin()">
+        <label class="inp-label">Contraseña</label>
+        <input type="password" id="a-pass" class="inp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doAdminLogin()">
+        <div id="login-err" class="error-box"><i class="fas fa-lock"></i> <span>Credenciales incorrectas</span></div>
+        <button class="btn-main" onclick="doAdminLogin()"><i class="fas fa-sign-in-alt"></i> Acceder al Panel</button>
+        <p style="text-align:center;font-size:.75rem;color:var(--text-muted);margin-top:16px">Acceso exclusivo para administradores autorizados</p>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- ADMIN SHELL -->
+<!-- ══════════════════════════════════════════ -->
+<div id="admin-shell">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="img/Logo(0).png" onerror="this.src='https://via.placeholder.com/40'">
+            <div>
+                <span class="sidebar-logo" style="display:block">La Camacho</span>
+                <span class="sidebar-badge">Admin</span>
+            </div>
+        </div>
+        <nav>
+            <div class="nav-section">Principal</div>
+            <div class="nav-item active" onclick="switchTab('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</div>
+            <div class="nav-section">Catálogo</div>
+            <div class="nav-item" onclick="switchTab('productos')"><i class="fas fa-boxes-stacked"></i> Productos</div>
+            <div class="nav-section">Operaciones</div>
+            <div class="nav-item" onclick="switchTab('pedidos')"><i class="fas fa-receipt"></i> Pedidos</div>
+            <div class="nav-item" onclick="switchTab('clientes')"><i class="fas fa-users"></i> Clientes</div>
+            <div class="nav-item" onclick="switchTab('proveedores')"><i class="fas fa-truck"></i> Proveedores</div>
+            <div class="nav-section">Reportes</div>
+            <div class="nav-item" onclick="switchTab('reportes')"><i class="fas fa-file-chart-column"></i> Reportes & PDF</div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="admin-info">
+                <div class="admin-avatar" id="av-letter">A</div>
+                <div>
+                    <div class="admin-name" id="av-name">Administrador</div>
+                    <div class="admin-role">Acceso total</div>
+                </div>
+            </div>
+            <button class="btn-logout" onclick="doAdminLogout()"><i class="fas fa-right-from-bracket"></i> Cerrar Sesión</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <!-- ── DASHBOARD ── -->
+        <div id="tab-dashboard" class="admin-view active">
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <p>Resumen general de operaciones</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card green"><div class="stat-icon"><i class="fas fa-peso-sign"></i></div><div class="stat-value" id="d-ventas">$0</div><div class="stat-label">Ventas Totales</div></div>
+                <div class="stat-card orange"><div class="stat-icon"><i class="fas fa-receipt"></i></div><div class="stat-value" id="d-pedidos">0</div><div class="stat-label">Pedidos Realizados</div></div>
+                <div class="stat-card yellow"><div class="stat-icon"><i class="fas fa-boxes-stacked"></i></div><div class="stat-value" id="d-productos">0</div><div class="stat-label">Productos Activos</div></div>
+                <div class="stat-card blue"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-value" id="d-clientes">0</div><div class="stat-label">Clientes Registrados</div></div>
+            </div>
+            <div class="charts-grid">
+                <div class="chart-card" style="grid-column:1/-1"><h4>Ventas por mes (últimos 6 meses)</h4><canvas id="chart-ventas" height="80"></canvas></div>
+                <div class="chart-card"><h4>Productos por categoría</h4><canvas id="chart-cats" height="200"></canvas></div>
+                <div class="chart-card"><h4>Pedidos recientes</h4><div id="recent-orders-list" style="max-height:240px;overflow-y:auto"></div></div>
+            </div>
+        </div>
+
+        <!-- ── PRODUCTOS ── -->
+        <div id="tab-productos" class="admin-view">
+            <div class="page-header">
+                <h1>Gestión de Productos</h1>
+                <p>Agrega, edita o elimina productos del catálogo</p>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><h3 id="form-prod-title"><i class="fas fa-plus"></i> Nuevo Producto</h3></div>
+                <div class="panel-body">
+                    <form id="form-producto" onsubmit="saveProduct(event)">
+                        <input type="hidden" id="prod-id">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Nombre del producto</label><input type="text" id="prod-nombre" class="form-input" placeholder="Ej: Arrachera Premium" required></div>
+                            <div class="form-group"><label>Precio ($)</label><input type="number" step="0.01" min="0" id="prod-precio" class="form-input" placeholder="0.00" required></div>
+                            <div class="form-group"><label>Categoría</label>
+                                <select id="prod-cat" class="form-input">
+                                    <option value="oferta">Oferta 🥩</option>
+                                    <option value="puerco">Carne de Puerco 🐖</option>
+                                    <option value="pollo">Pollería 🍗</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>URL / Ruta de imagen</label><input type="text" id="prod-img" class="form-input" placeholder="img/producto.jpg o https://..."></div>
+                        </div>
+                        <div style="display:flex;gap:10px;margin-top:18px">
+                            <button type="submit" class="btn-save"><i class="fas fa-save"></i> Guardar</button>
+                            <button type="button" id="btn-cancel-prod" class="btn-cancel" style="display:none" onclick="resetProdForm()">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><h3>Catálogo actual</h3><span id="prod-count" style="font-size:.8rem;color:var(--text-muted)">Cargando...</span></div>
+                <div class="tbl-wrap">
+                    <table><thead><tr><th>Imagen</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
+                    <tbody id="tbl-productos"></tbody></table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── PEDIDOS ── -->
+        <div id="tab-pedidos" class="admin-view">
+            <div class="page-header"><h1>Pedidos y Ventas</h1><p>Historial completo de transacciones</p></div>
+            <div class="panel">
+                <div class="panel-header"><h3>Todos los pedidos</h3></div>
+                <div class="tbl-wrap">
+                    <table><thead><tr><th>ID</th><th>Cliente</th><th>Total</th><th>Método</th><th>Estado</th><th>Fecha</th></tr></thead>
+                    <tbody id="tbl-pedidos"></tbody></table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── CLIENTES ── -->
+        <div id="tab-clientes" class="admin-view">
+            <div class="page-header"><h1>Base de Clientes</h1><p>Usuarios registrados en la plataforma</p></div>
+            <div class="panel">
+                <div class="panel-header"><h3>Clientes registrados</h3></div>
+                <div class="tbl-wrap">
+                    <table><thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>CURP</th><th>Registro</th></tr></thead>
+                    <tbody id="tbl-clientes"></tbody></table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── PROVEEDORES ── -->
+        <div id="tab-proveedores" class="admin-view">
+            <div class="page-header"><h1>Proveedores</h1><p>Directorio de distribuidores y proveedores</p></div>
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Directorio</h3>
+                    <button class="btn-save" onclick="openModal('modal-proveedor')"><i class="fas fa-plus"></i> Agregar</button>
+                </div>
+                <div class="tbl-wrap">
+                    <table><thead><tr><th>Empresa</th><th>Contacto</th><th>Teléfono</th><th>Región</th><th>Tipo</th></tr></thead>
+                    <tbody id="tbl-proveedores"></tbody></table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── REPORTES ── -->
+        <div id="tab-reportes" class="admin-view">
+            <div class="page-header"><h1>Reportes & Exportación PDF</h1><p>Genera y descarga reportes detallados por periodo</p></div>
+
+            <div class="report-filters panel" style="padding:20px">
+                <div class="filter-group">
+                    <label>Tipo de periodo</label>
+                    <select id="r-periodo" class="form-input">
+                        <option value="diario">Diario</option>
+                        <option value="semanal">Semanal</option>
+                        <option value="mensual" selected>Mensual</option>
+                        <option value="anual">Anual</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Desde</label>
+                    <input type="date" id="r-desde" class="form-input">
+                </div>
+                <div class="filter-group">
+                    <label>Hasta</label>
+                    <input type="date" id="r-hasta" class="form-input">
+                </div>
+                <div class="filter-group" style="justify-content:flex-end">
+                    <label style="opacity:0">.</label>
+                    <button class="btn-report" onclick="generateReport()"><i class="fas fa-chart-bar"></i> Generar Reporte</button>
+                </div>
+                <div class="filter-group" style="justify-content:flex-end">
+                    <label style="opacity:0">.</label>
+                    <button class="btn-pdf" id="btn-pdf" onclick="exportPDF()" disabled><i class="fas fa-file-pdf"></i> Descargar PDF</button>
+                </div>
+            </div>
+
+            <div id="report-result" style="display:none">
+                <div class="report-summary" id="report-summary"></div>
+                <div class="charts-grid">
+                    <div class="chart-card" style="grid-column:1/-1"><h4>Ventas en el periodo</h4><canvas id="chart-report-ventas" height="80"></canvas></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>Detalle de pedidos en el periodo</h3></div>
+                    <div class="tbl-wrap">
+                        <table><thead><tr><th>ID Pedido</th><th>Cliente</th><th>Total</th><th>Estado</th><th>Fecha</th></tr></thead>
+                        <tbody id="tbl-reporte"></tbody></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- MODAL: PROVEEDOR -->
+<div id="modal-proveedor" class="modal-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('modal-proveedor')"><i class="fas fa-times"></i></button>
+        <h2>Nuevo Proveedor</h2>
+        <label class="field-label">Empresa</label>
+        <input type="text" id="pv-empresa" class="input-field" placeholder="Distribuidora XYZ">
+        <label class="field-label">Contacto</label>
+        <input type="text" id="pv-contacto" class="input-field" placeholder="Ing. García">
+        <label class="field-label">Teléfono</label>
+        <input type="text" id="pv-tel" class="input-field" placeholder="768-000-0000">
+        <label class="field-label">Región / Origen</label>
+        <input type="text" id="pv-region" class="input-field" placeholder="Tuxpan, Veracruz">
+        <label class="field-label">Tipo de producto</label>
+        <select id="pv-tipo" class="input-field" style="background:var(--dark3);">
+            <option>Carne de Puerco</option><option>Pollería</option><option>Empaques</option><option>General</option>
+        </select>
+        <button class="btn-save" style="width:100%;margin-top:4px;justify-content:center" onclick="saveProveedor()"><i class="fas fa-save"></i> Guardar Proveedor</button>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ════════════════════════════════════════════════
+// ⚠️  CONFIGURACIÓN SUPABASE
+// ════════════════════════════════════════════════
+const SUPABASE_URL = 'https://kukcvsgizbgfmpszevgb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBydGxzaXJnYmdzaXFpeWhhZWpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MTY1NzAsImV4cCI6MjA5NjE5MjU3MH0.SOHOirZjqdp6LVYmkGbaF3vT2wiEsKNOG-HuesBxbqk'; // ← pega tu anon key aquí
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ════════════════════════════════════════════════
+// CREDENCIALES ADMIN (cámbialas después)
+// Para más seguridad, guárdalas en la tabla `admins` de Supabase
+// ════════════════════════════════════════════════
+const ADMINS = [
+    { usuario: 'admin',     clave: 'camacho2026', nombre: 'Administrador' },
+    { usuario: 'gerente',   clave: 'gerente2026', nombre: 'Gerente'        },
+];
+
+let currentAdmin = null;
+let reporteData  = [];
+let chartVentasInst = null, chartCatsInst = null, chartReportInst = null;
+let proveedoresLocales = [
+    { empresa:'Distribuidora de Aves del Norte', contacto:'Ing. Martínez', telefono:'789-102-3456', region:'Naranjos, Ver.', tipo:'Pollería' },
+    { empresa:'Porcinos de la Huasteca', contacto:'Sra. Alicia Gómez', telefono:'768-114-9876', region:'Chinampa de Gorostiza', tipo:'Carne de Puerco' },
+    { empresa:'Empaques Cárnicos Tuxpan', contacto:'Lic. Herrera', telefono:'783-834-1122', region:'Tuxpan, Ver.', tipo:'Empaques' },
+];
+
+// ── TOAST ──
+function toast(msg, type='success') {
+    const el = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    el.className = 'show';
+    el.querySelector('i').className = type==='success'?'fas fa-check-circle':'fas fa-exclamation-circle';
+    el.style.borderColor = type==='success'?'rgba(63,185,80,.4)':'rgba(248,81,73,.4)';
+    setTimeout(()=>el.className='',3000);
+}
+
+// ── MODALES ──
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('open'); }));
+
+// ════════════════════════════════════════════════
+// LOGIN ADMIN
+// ════════════════════════════════════════════════
+function doAdminLogin() {
+    const user = document.getElementById('a-user').value.trim();
+    const pass = document.getElementById('a-pass').value.trim();
+    const match = ADMINS.find(a => a.usuario === user && a.clave === pass);
+    if (!match) {
+        document.getElementById('login-err').style.display = 'block';
+        document.getElementById('a-pass').value = '';
+        return;
+    }
+    currentAdmin = match;
+    document.getElementById('av-name').textContent   = match.nombre;
+    document.getElementById('av-letter').textContent = match.nombre.charAt(0);
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-shell').style.display  = 'block';
+    loadAllData();
+    toast(`Bienvenido, ${match.nombre} 👋`);
+}
+
+function doAdminLogout() {
+    currentAdmin = null;
+    document.getElementById('admin-shell').style.display  = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('a-pass').value = '';
+    document.getElementById('login-err').style.display = 'none';
+}
+
+// ════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════
+function switchTab(id) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.admin-view').forEach(v => v.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('tab-' + id).classList.add('active');
+}
+
+// ════════════════════════════════════════════════
+// CARGAR TODOS LOS DATOS
+// ════════════════════════════════════════════════
+async function loadAllData() {
+    await Promise.all([loadProductos(), loadPedidos(), loadClientes()]);
+    loadProveedores();
+    setDefaultDates();
+}
+
+// ════════════════════════════════════════════════
+// PRODUCTOS
+// ════════════════════════════════════════════════
+let prodCache = [];
+async function loadProductos() {
+    try {
+        const { data, error } = await db.from('productos').select('*').order('nombre');
+        if (error) throw error;
+        prodCache = data || [];
+    } catch(e) {
+        prodCache = [];
+    }
+    renderProductosTable(prodCache);
+    document.getElementById('prod-count').textContent = `${prodCache.length} producto(s)`;
+    document.getElementById('d-productos').textContent = prodCache.length;
+    renderCatsChart(prodCache);
+}
+
+function renderProductosTable(data) {
+    const tbody = document.getElementById('tbl-productos');
+    if (!data.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:30px">Sin productos registrados</td></tr>'; return; }
+    tbody.innerHTML = data.map(p => `
+        <tr>
+            <td><img src="${p.imagen_url||''}" class="img-thumb" onerror="this.src='https://via.placeholder.com/40?text=🥩'"></td>
+            <td style="font-weight:700">${p.nombre}</td>
+            <td><span class="badge b-${p.categoria}">${p.categoria}</span></td>
+            <td style="font-weight:800;color:var(--brand2)">$${Number(p.precio).toFixed(2)}</td>
+            <td><span style="color:${p.disponible?'var(--green)':'var(--red)'}"><i class="fas fa-circle" style="font-size:.5rem"></i> ${p.disponible?'Activo':'Inactivo'}</span></td>
+            <td>
+                <div class="btn-row">
+                    <button class="btn-icon btn-edit" onclick="startEditProd('${p.id}','${escQ(p.nombre)}',${p.precio},'${p.categoria}','${escQ(p.imagen_url||'')}')"><i class="fas fa-pen"></i></button>
+                    <button class="btn-icon btn-del" onclick="deleteProd('${p.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>`).join('');
+}
+
+function escQ(s) { return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+
+async function saveProduct(e) {
+    e.preventDefault();
+    const id       = document.getElementById('prod-id').value;
+    const nombre   = document.getElementById('prod-nombre').value.trim();
+    const precio   = parseFloat(document.getElementById('prod-precio').value);
+    const categoria = document.getElementById('prod-cat').value;
+    const imagen_url = document.getElementById('prod-img').value.trim();
+    const payload  = { nombre, precio, categoria, imagen_url, disponible: true };
+
+    try {
+        if (id) {
+            const { error } = await db.from('productos').update(payload).eq('id', id);
+            if (error) throw error;
+            toast('Producto actualizado ✅');
+        } else {
+            const { error } = await db.from('productos').insert([payload]);
+            if (error) throw error;
+            toast('Producto agregado al catálogo ✅');
+        }
+    } catch(err) { toast('Error: ' + err.message, 'error'); }
+    resetProdForm();
+    loadProductos();
+}
+
+function startEditProd(id, nombre, precio, categoria, img) {
+    document.getElementById('prod-id').value    = id;
+    document.getElementById('prod-nombre').value = nombre;
+    document.getElementById('prod-precio').value = precio;
+    document.getElementById('prod-cat').value   = categoria;
+    document.getElementById('prod-img').value   = img;
+    document.getElementById('form-prod-title').innerHTML = '<i class="fas fa-pen"></i> Editar Producto';
+    document.getElementById('btn-cancel-prod').style.display = 'inline-flex';
+    document.getElementById('tab-productos').scrollIntoView({ behavior:'smooth' });
+}
+
+function resetProdForm() {
+    document.getElementById('form-producto').reset();
+    document.getElementById('prod-id').value = '';
+    document.getElementById('form-prod-title').innerHTML = '<i class="fas fa-plus"></i> Nuevo Producto';
+    document.getElementById('btn-cancel-prod').style.display = 'none';
+}
+
+async function deleteProd(id) {
+    if (!confirm('¿Eliminar este producto del catálogo?')) return;
+    try {
+        await db.from('productos').delete().eq('id', id);
+        toast('Producto eliminado');
+        loadProductos();
+    } catch(e) { toast('Error al eliminar', 'error'); }
+}
+
+// ════════════════════════════════════════════════
+// PEDIDOS
+// ════════════════════════════════════════════════
+let pedidosCache = [];
+async function loadPedidos() {
+    try {
+        const { data, error } = await db.from('pedidos').select('*, clientes(nombre,correo)').order('created_at', { ascending: false });
+        if (error) throw error;
+        pedidosCache = data || [];
+    } catch(e) { pedidosCache = []; }
+
+    const total = pedidosCache.reduce((a,p) => a + Number(p.total), 0);
+    document.getElementById('d-pedidos').textContent = pedidosCache.length;
+    document.getElementById('d-ventas').textContent  = '$' + total.toLocaleString('es-MX', { minimumFractionDigits:2 });
+
+    const tbody = document.getElementById('tbl-pedidos');
+    if (!pedidosCache.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:30px">Sin pedidos registrados</td></tr>'; return; }
+    tbody.innerHTML = pedidosCache.map(p => `
+        <tr>
+            <td style="font-family:monospace;font-size:.8rem;color:var(--brand2)">#${p.id.slice(0,8).toUpperCase()}</td>
+            <td>${p.clientes?.nombre || 'Sin cliente'}</td>
+            <td style="font-weight:800;color:var(--green)">$${Number(p.total).toFixed(2)}</td>
+            <td><i class="fab fa-cc-visa" style="color:#4f8ef7"></i> VISA</td>
+            <td><span class="badge b-pagado">${p.estado}</span></td>
+            <td style="color:var(--text-muted);font-size:.82rem">${p.created_at ? new Date(p.created_at).toLocaleDateString('es-MX') : '—'}</td>
+        </tr>`).join('');
+
+    // Pedidos recientes en dashboard
+    const recent = pedidosCache.slice(0,5);
+    document.getElementById('recent-orders-list').innerHTML = recent.map(p => `
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+            <div>
+                <div style="font-weight:700;font-size:.85rem">#${p.id.slice(0,8).toUpperCase()}</div>
+                <div style="font-size:.75rem;color:var(--text-muted)">${p.clientes?.nombre || 'Sin cliente'}</div>
+            </div>
+            <div style="font-weight:800;color:var(--brand2)">$${Number(p.total).toFixed(2)}</div>
+        </div>`).join('');
+
+    renderVentasChart(pedidosCache);
+}
+
+// ════════════════════════════════════════════════
+// CLIENTES
+// ════════════════════════════════════════════════
+async function loadClientes() {
+    try {
+        const { data, error } = await db.from('clientes').select('id,nombre,apellido,correo,telefono,curp,created_at').order('created_at', { ascending: false });
+        if (error) throw error;
+        document.getElementById('d-clientes').textContent = (data||[]).length;
+        const tbody = document.getElementById('tbl-clientes');
+        if (!data?.length) { tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">Sin clientes registrados</td></tr>'; return; }
+        tbody.innerHTML = data.map(c => `
+            <tr>
+                <td style="font-weight:700">${c.nombre} ${c.apellido||''}</td>
+                <td>${c.correo}</td>
+                <td>${c.telefono||'—'}</td>
+                <td style="font-family:monospace;font-size:.8rem;color:var(--blue)">${c.curp||'N/A'}</td>
+                <td style="color:var(--text-muted);font-size:.82rem">${c.created_at ? new Date(c.created_at).toLocaleDateString('es-MX') : '—'}</td>
+            </tr>`).join('');
+    } catch(e) { document.getElementById('d-clientes').textContent = '0'; }
+}
+
+// ════════════════════════════════════════════════
+// PROVEEDORES
+// ════════════════════════════════════════════════
+function loadProveedores() {
+    document.getElementById('tbl-proveedores').innerHTML = proveedoresLocales.map(p => `
+        <tr>
+            <td style="font-weight:700">${p.empresa}</td>
+            <td>${p.contacto}</td>
+            <td>${p.telefono}</td>
+            <td>${p.region}</td>
+            <td><span class="badge b-puerco">${p.tipo}</span></td>
+        </tr>`).join('');
+}
+
+async function saveProveedor() {
+    const empresa  = document.getElementById('pv-empresa').value.trim();
+    const contacto = document.getElementById('pv-contacto').value.trim();
+    const telefono = document.getElementById('pv-tel').value.trim();
+    const region   = document.getElementById('pv-region').value.trim();
+    const tipo     = document.getElementById('pv-tipo').value;
+    if (!empresa) return toast('Ingresa el nombre de la empresa','error');
+    proveedoresLocales.push({ empresa, contacto, telefono, region, tipo });
+    loadProveedores();
+    closeModal('modal-proveedor');
+    toast('Proveedor agregado ✅');
+}
+
+// ════════════════════════════════════════════════
+// CHARTS
+// ════════════════════════════════════════════════
+const chartDefaults = {
+    color: '#8B949E',
+    plugins: { legend: { labels: { color:'#8B949E', font:{family:'Nunito'} } } },
+    scales: { x: { ticks:{color:'#8B949E'}, grid:{color:'rgba(255,255,255,.04)'} }, y: { ticks:{color:'#8B949E'}, grid:{color:'rgba(255,255,255,.04)'} } }
+};
+
+function renderVentasChart(pedidos) {
+    const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    const now = new Date();
+    const labels = [], totals = [];
+    for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        labels.push(months[d.getMonth()] + ' ' + d.getFullYear().toString().slice(-2));
+        const sum = pedidos.filter(p => {
+            if (!p.created_at) return false;
+            const pd = new Date(p.created_at);
+            return pd.getMonth() === d.getMonth() && pd.getFullYear() === d.getFullYear();
+        }).reduce((a,p) => a + Number(p.total), 0);
+        totals.push(sum.toFixed(2));
+    }
+    if (chartVentasInst) chartVentasInst.destroy();
+    chartVentasInst = new Chart(document.getElementById('chart-ventas'), {
+        type: 'bar',
+        data: { labels, datasets: [{ label:'Ventas ($)', data: totals, backgroundColor:'rgba(255,107,53,0.7)', borderRadius:8 }] },
+        options: { ...chartDefaults, plugins:{ legend:{display:false} } }
+    });
+}
+
+function renderCatsChart(productos) {
+    const cats = { oferta:0, puerco:0, pollo:0 };
+    productos.forEach(p => { if (cats[p.categoria] !== undefined) cats[p.categoria]++; });
+    if (chartCatsInst) chartCatsInst.destroy();
+    chartCatsInst = new Chart(document.getElementById('chart-cats'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Ofertas','Puerco','Pollo'],
+            datasets: [{ data: [cats.oferta, cats.puerco, cats.pollo], backgroundColor:['#c77dff','#FF6B35','#3FB950'], borderWidth:0 }]
+        },
+        options: { plugins:{ legend:{ labels:{ color:'#8B949E', font:{family:'Nunito'} } } } }
+    });
+}
+
+// ════════════════════════════════════════════════
+// REPORTES
+// ════════════════════════════════════════════════
+function setDefaultDates() {
+    const hoy   = new Date();
+    const desde = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    document.getElementById('r-hasta').value = hoy.toISOString().slice(0,10);
+    document.getElementById('r-desde').value = desde.toISOString().slice(0,10);
+}
+
+async function generateReport() {
+    const desde  = document.getElementById('r-desde').value;
+    const hasta  = document.getElementById('r-hasta').value;
+    const periodo = document.getElementById('r-periodo').value;
+    if (!desde || !hasta) return toast('Selecciona un rango de fechas','error');
+
+    try {
+        const { data, error } = await db.from('pedidos')
+            .select('*, clientes(nombre,correo)')
+            .gte('created_at', desde + 'T00:00:00')
+            .lte('created_at', hasta + 'T23:59:59')
+            .order('created_at', { ascending: false });
+        if (error) throw error;
+        reporteData = data || [];
+    } catch(e) {
+        reporteData = pedidosCache.filter(p => {
+            if (!p.created_at) return false;
+            const d = p.created_at.slice(0,10);
+            return d >= desde && d <= hasta;
+        });
+    }
+
+    const totalVentas = reporteData.reduce((a,p) => a + Number(p.total), 0);
+    const totalPedidos = reporteData.length;
+    const promedio = totalPedidos ? (totalVentas / totalPedidos) : 0;
+
+    document.getElementById('report-summary').innerHTML = `
+        <div class="summary-item"><div class="summary-value">$${totalVentas.toLocaleString('es-MX',{minimumFractionDigits:2})}</div><div class="summary-label">Ventas Totales</div></div>
+        <div class="summary-item"><div class="summary-value">${totalPedidos}</div><div class="summary-label">Pedidos</div></div>
+        <div class="summary-item"><div class="summary-value">$${promedio.toFixed(2)}</div><div class="summary-label">Ticket Promedio</div></div>
+        <div class="summary-item"><div class="summary-value">${desde} – ${hasta}</div><div class="summary-label">Periodo: ${periodo}</div></div>`;
+
+    document.getElementById('tbl-reporte').innerHTML = reporteData.map(p => `
+        <tr>
+            <td style="font-family:monospace;color:var(--brand2)">#${p.id.slice(0,8).toUpperCase()}</td>
+            <td>${p.clientes?.nombre || '—'}</td>
+            <td style="font-weight:800;color:var(--green)">$${Number(p.total).toFixed(2)}</td>
+            <td><span class="badge b-pagado">${p.estado}</span></td>
+            <td style="color:var(--text-muted)">${p.created_at ? new Date(p.created_at).toLocaleDateString('es-MX') : '—'}</td>
+        </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px">Sin pedidos en este periodo</td></tr>';
+
+    // Mini chart del reporte
+    const grouped = {};
+    reporteData.forEach(p => {
+        const key = p.created_at?.slice(0,10) || 'N/A';
+        grouped[key] = (grouped[key] || 0) + Number(p.total);
+    });
+    const keys = Object.keys(grouped).sort();
+    if (chartReportInst) chartReportInst.destroy();
+    chartReportInst = new Chart(document.getElementById('chart-report-ventas'), {
+        type: 'line',
+        data: { labels: keys, datasets: [{ label:'Ventas ($)', data: keys.map(k => grouped[k].toFixed(2)), borderColor:'#FF6B35', backgroundColor:'rgba(255,107,53,.1)', fill:true, tension:.4, pointBackgroundColor:'#FF6B35' }] },
+        options: { ...chartDefaults, plugins:{ legend:{display:false} } }
+    });
+
+    document.getElementById('report-result').style.display = 'block';
+    document.getElementById('btn-pdf').disabled = false;
+    toast('Reporte generado ✅');
+}
+
+// ════════════════════════════════════════════════
+// EXPORTAR PDF
+// ════════════════════════════════════════════════
+function exportPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+    const desde  = document.getElementById('r-desde').value;
+    const hasta  = document.getElementById('r-hasta').value;
+    const periodo = document.getElementById('r-periodo').value.toUpperCase();
+    const totalVentas  = reporteData.reduce((a,p) => a + Number(p.total), 0);
+    const totalPedidos = reporteData.length;
+
+    // ── ENCABEZADO ──
+    doc.setFillColor(13,17,23);
+    doc.rect(0,0,210,297,'F');
+    doc.setFillColor(255,107,53);
+    doc.rect(0,0,210,38,'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(22);
+    doc.setTextColor(255,255,255);
+    doc.text('CARNICERIA LA CAMACHO', 105, 16, { align:'center' });
+    doc.setFontSize(11);
+    doc.setTextColor(255,230,200);
+    doc.text(`REPORTE ${periodo} · ${desde} al ${hasta}`, 105, 26, { align:'center' });
+    doc.setFontSize(9);
+    doc.setTextColor(255,200,160);
+    doc.text(`Generado el ${new Date().toLocaleDateString('es-MX')} por ${currentAdmin?.nombre||'Admin'}`, 105, 34, { align:'center' });
+
+    // ── RESUMEN ──
+    let y = 50;
+    const boxes = [
+        { label:'VENTAS TOTALES', value: `$${totalVentas.toLocaleString('es-MX',{minimumFractionDigits:2})}`, color:[63,185,80] },
+        { label:'TOTAL PEDIDOS',  value: totalPedidos, color:[255,107,53] },
+        { label:'TICKET PROMEDIO', value: `$${totalPedidos ? (totalVentas/totalPedidos).toFixed(2) : '0.00'}`, color:[88,166,255] },
+    ];
+    const bw = 55, bx = 20, gap = 10;
+    boxes.forEach((b, i) => {
+        const x = bx + i*(bw+gap);
+        doc.setFillColor(...b.color);
+        doc.roundedRect(x, y, bw, 22, 3, 3, 'F');
+        doc.setFontSize(7); doc.setTextColor(255,255,255); doc.setFont('helvetica','normal');
+        doc.text(b.label, x + bw/2, y+8, { align:'center' });
+        doc.setFontSize(14); doc.setFont('helvetica','bold');
+        doc.text(String(b.value), x + bw/2, y+17, { align:'center' });
+    });
+
+    // ── TABLA DE PEDIDOS ──
+    y += 32;
+    doc.setFontSize(12); doc.setTextColor(255,213,102); doc.setFont('helvetica','bold');
+    doc.text('Detalle de Pedidos', 20, y);
+    y += 6;
+    const rows = reporteData.map(p => [
+        '#' + p.id.slice(0,8).toUpperCase(),
+        p.clientes?.nombre || '—',
+        '$' + Number(p.total).toFixed(2),
+        p.estado,
+        p.created_at ? new Date(p.created_at).toLocaleDateString('es-MX') : '—'
+    ]);
+    doc.autoTable({
+        startY: y,
+        head: [['ID Pedido','Cliente','Total','Estado','Fecha']],
+        body: rows,
+        theme: 'grid',
+        headStyles: { fillColor:[255,107,53], textColor:[255,255,255], fontStyle:'bold', fontSize:8 },
+        bodyStyles: { fillColor:[22,27,34], textColor:[230,237,243], fontSize:8 },
+        alternateRowStyles: { fillColor:[28,35,51] },
+        styles: { cellPadding:3, lineColor:[255,107,53,0.1] },
+    });
+
+    // ── FOOTER ──
+    const pageH = doc.internal.pageSize.height;
+    doc.setFontSize(8); doc.setTextColor(100,120,140);
+    doc.text('© 2026 Carnicería La Camacho · Naranjos, Veracruz · Documento confidencial', 105, pageH-10, { align:'center' });
+
+    doc.save(`reporte_lacamacho_${desde}_${hasta}.pdf`);
+    toast('PDF descargado ✅');
+}
+
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+// Precarga de fechas al abrir
+setDefaultDates();
+</script>
+</body>
+</html>

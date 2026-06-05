@@ -444,16 +444,23 @@ function doAdminLogin() {
         return;
     }
     currentAdmin = match;
-    document.getElementById('av-name').textContent   = match.nombre;
-    document.getElementById('av-letter').textContent = match.nombre.charAt(0);
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('admin-shell').style.display  = 'block';
+    localStorage.setItem('adminSession', JSON.stringify(match));
+    activarAdmin(match);
     loadAllData();
     toast(`Bienvenido, ${match.nombre} 👋`);
 }
 
+function activarAdmin(match) {
+    currentAdmin = match;
+    document.getElementById('av-name').textContent   = match.nombre;
+    document.getElementById('av-letter').textContent = match.nombre.charAt(0);
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-shell').style.display  = 'block';
+}
+
 function doAdminLogout() {
     currentAdmin = null;
+    localStorage.removeItem('adminSession');
     document.getElementById('admin-shell').style.display  = 'none';
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('a-pass').value = '';
@@ -537,9 +544,11 @@ async function saveProduct(e) {
             if (error) throw error;
             toast('Producto agregado al catálogo ✅');
         }
-    } catch(err) { toast('Error: ' + err.message, 'error'); }
-    resetProdForm();
-    loadProductos();
+        resetProdForm();
+        await loadProductos(); // ← recarga la tabla al instante sin refrescar
+    } catch(err) {
+        toast('Error: ' + err.message, 'error');
+    }
 }
 
 function startEditProd(id, nombre, precio, categoria, img) {
@@ -852,9 +861,22 @@ function exportPDF() {
 }
 
 // ════════════════════════════════════════════════
-// INIT
+// INIT — Recuperar sesión admin al refrescar
 // ════════════════════════════════════════════════
-// Precarga de fechas al abrir
+const adminGuardado = localStorage.getItem('adminSession');
+if (adminGuardado) {
+    try {
+        const match = JSON.parse(adminGuardado);
+        // Verificar que siga siendo un admin válido
+        const valido = ADMINS.find(a => a.usuario === match.usuario && a.clave === match.clave);
+        if (valido) {
+            activarAdmin(valido);
+            loadAllData();
+        } else {
+            localStorage.removeItem('adminSession');
+        }
+    } catch(e) { localStorage.removeItem('adminSession'); }
+}
 setDefaultDates();
 </script>
 </body>
